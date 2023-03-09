@@ -1,0 +1,8 @@
+frontend:
+  directory: ".dist/frontend"
+server:
+  port: "3000"
+  projects:
+    - name: "sealed-secrets"
+      controllerName: "sealed-secrets"
+      controllerNamespace: "sealed-secrets"
