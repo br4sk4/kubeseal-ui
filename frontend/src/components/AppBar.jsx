@@ -1,5 +1,5 @@
 import {Box, Flex, Heading, HStack, Image, Text} from "@hope-ui/solid"
-import secretImage from '../assets/secret2.png'
+import secretImage from '../assets/secret.png'
 
 function AppBar() {
     return (
