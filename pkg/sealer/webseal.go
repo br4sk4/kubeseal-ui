@@ -1,6 +1,7 @@
 package sealer
 
 import (
+	"fmt"
 	"io"
 	"os/exec"
 )
@@ -9,7 +10,8 @@ func Seal(controllerNamespace, controllerName string, secret []byte) ([]byte, er
 	cmd := exec.Command("kubeseal", "--controller-namespace", controllerNamespace, "--controller-name", controllerName, "-o", "yaml")
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		return nil, err
+		errorMessage, _ := cmd.CombinedOutput()
+		return nil, fmt.Errorf("%s", errorMessage)
 	}
 
 	go func() {
