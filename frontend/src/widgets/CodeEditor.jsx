@@ -4,10 +4,11 @@ import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
 import {createEffect, onMount} from "solid-js";
-import { Heading } from "@hope-ui/solid";
+import {Heading, useColorMode} from "@hope-ui/solid";
 
 function CodeEditor(props) {
     let editor
+    const { colorMode } = useColorMode()
 
     onMount(() => {
         let container = document.getElementById(props.id)
@@ -33,6 +34,10 @@ function CodeEditor(props) {
 
     createEffect(() => {
         editor.getModel().setValue(props.content)
+    })
+
+    createEffect(() => {
+        monaco.editor.setTheme("vs-" + colorMode())
     })
 
     return (

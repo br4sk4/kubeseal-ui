@@ -3,10 +3,12 @@ import { Show } from "solid-js"
 
 const formButtonCSS = css({
     backgroundColor: "$neutral1",
+    color: "$color",
     border: "1px solid $neutral9",
     "&:hover": {
         border: "1px solid $primary8",
         backgroundColor: "$neutral4",
+        color: "$primary8",
     },
     "&:active": {
         backgroundColor: "$primary6",
@@ -17,9 +19,11 @@ const formButtonCSS = css({
         "&:hover": {
             border: "1px solid $primary8",
             backgroundColor: "$neutral4",
+            color: "$primary8",
         },
         "&:active": {
             backgroundColor: "$primary6",
+            color: "$primary8",
         }
     },
 })
@@ -28,11 +32,11 @@ function FormButton(props) {
     return (
         <>
             <Show when={!!props.icon}>
-                <IconButton variant="default" size="sm" color="$color" class={formButtonCSS()} {...props} />
+                <IconButton variant="default" color="$color" class={formButtonCSS()} {...props} />
             </Show>
             <Show when={!!props.text && props.text !== ""}>
                 <Button variant="default" class={formButtonCSS()} {...props}>
-                    <Text color="$color">{props.text}</Text>
+                    <Text>{props.text}</Text>
                 </Button>
             </Show>
         </>
