@@ -8,7 +8,7 @@ function ApplicationProvider() {
         initialColorMode: "dark",
         darkTheme: {
             colors: {
-                primary: "#c22517",
+                primary: "#c5281c",
                 background: "#1e1e1e",
                 color: "white",
                 primary1: "#61130c",
@@ -27,7 +27,7 @@ function ApplicationProvider() {
         },
         lightTheme: {
             colors: {
-                primary: "#c22517",
+                primary: "#c5281c",
                 background: "#fffffe",
                 color: "black",
                 primary1: "#ef857c",
