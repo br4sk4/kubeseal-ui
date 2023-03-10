@@ -25,6 +25,8 @@ func StartServer() {
 	mux.Handle("/api/seal/", http.StripPrefix("/api/seal", http.HandlerFunc(sealEnpointHandler)))
 	mux.Handle("/api/reencrypt", http.StripPrefix("/api/reencrypt", http.HandlerFunc(reencryptEnpointHandler)))
 	mux.Handle("/api/reencrypt/", http.StripPrefix("/api/reencrypt", http.HandlerFunc(reencryptEnpointHandler)))
+	mux.Handle("/api/projects", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpoointHandler)))
+	mux.Handle("/api/projects/", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpoointHandler)))
 
 	log.Print(fmt.Sprintf("Listening on :%s ...", config.Server.Port))
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.Server.Port), mux); err != nil {
@@ -43,21 +45,25 @@ func sealEnpointHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var requestBody RequestBody
+	var requestBody SealingRequestBody
 	if !checkError(w, json.Unmarshal(body, &requestBody), "error while unmarshalling request body") {
 		return
 	}
 
-	sealedSecret, err := Seal("sealed-secrets", "sealed-secrets", []byte(requestBody.RawSecret))
+	controllerNamespace, controllerName, err := getControllerInfo(requestBody.Project)
+	if !checkError(w, err, "error while searching project") {
+		return
+	}
+
+	sealedSecret, err := Seal(controllerNamespace, controllerName, []byte(requestBody.RawSecret))
 	if !checkError(w, err, "error while sealing secret") {
 		return
 	}
 
-	responseBody, err := json.Marshal(ResponseBody{SealedSecret: string(sealedSecret)})
+	responseBody, err := json.Marshal(SealingResponseBody{SealedSecret: string(sealedSecret)})
 	if !checkError(w, err, "error while marashalling response body") {
 		return
 	}
-	json.Marshal(ResponseBody{SealedSecret: string(sealedSecret)})
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(responseBody)
@@ -65,6 +71,32 @@ func sealEnpointHandler(w http.ResponseWriter, r *http.Request) {
 
 func reencryptEnpointHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
+}
+
+func projectsEndpoointHandler(w http.ResponseWriter, r *http.Request) {
+	projects := make([]string, 0)
+
+	for _, project := range config.Server.Projects {
+		projects = append(projects, project.Name)
+	}
+
+	responseBody, err := json.Marshal(ProjectsResponseBody{Projects: projects})
+	if !checkError(w, err, "error while marashalling response body") {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseBody)
+}
+
+func getControllerInfo(projectName string) (string, string, error) {
+	for _, project := range config.Server.Projects {
+		if project.Name == projectName {
+			return project.ControllerNamespace, project.ControllerName, nil
+		}
+	}
+
+	return "", "", fmt.Errorf("could not find project")
 }
 
 func checkError(w http.ResponseWriter, err error, message string) (ok bool) {
@@ -83,11 +115,15 @@ func handleError(w http.ResponseWriter, err error) {
 	w.Write([]byte(err.Error()))
 }
 
-type RequestBody struct {
+type SealingRequestBody struct {
 	Project   string `json:"project"`
 	RawSecret string `json:"rawSecret"`
 }
 
-type ResponseBody struct {
+type SealingResponseBody struct {
 	SealedSecret string `json:"sealedSecret"`
+}
+
+type ProjectsResponseBody struct {
+	Projects []string `json:"projects"`
 }

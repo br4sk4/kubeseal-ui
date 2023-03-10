@@ -3,11 +3,13 @@ import {Box, css, Flex, Grid, GridItem, HStack, Spacer} from "@hope-ui/solid";
 import CodeEditor from "../widgets/CodeEditor";
 import FormButton from "../widgets/FormButton";
 import SealingService from "../services/SealingService";
+import FormSelect from "../widgets/FormSelect";
+import {onMount} from "solid-js";
 
 const boxCSS = css({
     width: "100%",
     height: "100%",
-    backgroundColor: "$background"
+    backgroundColor: "$background",
 })
 
 const actionBoxCSS = css({
@@ -15,7 +17,7 @@ const actionBoxCSS = css({
     height: "60px",
     border: "solid 1px $neutral9",
     borderRadius: "$lg",
-    padding: "10px"
+    padding: "10px",
 })
 
 const editorBoxCSS = css({
@@ -25,34 +27,64 @@ const editorBoxCSS = css({
     border: "solid 1px $neutral9",
     borderRadius: "$lg",
     marginTop: "20px",
-    paddingBottom: "15px"
+    paddingBottom: "15px",
 })
 
 function SealingForm() {
     const [store, setStore] = createStore({
+        project: "",
+        projects: [],
         rawSecret: "",
-        sealedSecret: ""
+        sealedSecret: "",
+    })
+
+    onMount(() => {
+        SealingService.getProjects()
+            .then((response) => {
+                setStore({
+                    project: store.project,
+                    projects: response.projects,
+                    rawSecret: store.rawSecret,
+                    sealedSecret: store.sealedSecret,
+                })
+            }).catch((error) => {
+                // TODO (br4sk4): implement frontend notifications
+                console.log(error)
+            })
     })
 
     const onRawSecretEditorChange = (value) => {
         setStore({
+            project: store.project,
+            projects: store.projects,
             rawSecret: value,
-            sealedSecret: store.sealedSecret
+            sealedSecret: store.sealedSecret,
         })
     }
 
     const onSealButtonClick = () => {
         SealingService.sealSecret({
-            project: "default",
+            project: store.project,
             rawSecret: store.rawSecret
         }).then((response) => {
             setStore({
+                project: store.project,
+                projects: store.projects,
                 rawSecret: store.rawSecret,
-                sealedSecret: response.sealedSecret
+                sealedSecret: response.sealedSecret,
             })
         }).catch((error) => {
             // TODO (br4sk4): implement frontend notifications
             console.log(error)
+        })
+    }
+
+    const onProjectSelectionChange = (value) => {
+        setStore({
+            project: value,
+            projects: store.projects,
+            rawSecret: store.rawSecret,
+            sealedSecret: store.sealedSecret,
         })
     }
 
@@ -61,11 +93,15 @@ function SealingForm() {
             <Box class={boxCSS()}>
                 <Box class={actionBoxCSS()}>
                     <Flex>
-                        <Spacer />
-                        <HStack spacing="10px">
+                        <Box flex="1" marginRight="10px">
+                            <FormSelect width="100%" options={store.projects} onChange={(value) => onProjectSelectionChange(value)} />
+                        </Box>
+                        <Box>
+                            <HStack spacing="10px">
                             <FormButton id="reencryptButton" text="Reencrypt" width="120px" />
                             <FormButton id="sealButton" text="Seal" width="120px" onClick={() => onSealButtonClick()} />
-                        </HStack>
+                            </HStack>
+                        </Box>
                     </Flex>
                 </Box>
                 <Grid height="100%" templateColumns="repeat(2, 1fr)" gap="20px">

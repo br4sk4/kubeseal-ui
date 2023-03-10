@@ -6,6 +6,10 @@ class SealingService {
     reencryptSecret(requestBody) {
         return fetchSealedSecret("/api/reencrypt", requestBody)
     }
+
+    getProjects() {
+        return fetchProjects()
+    }
 }
 
 async function fetchSealedSecret(url, requestBody) {
@@ -16,6 +20,17 @@ async function fetchSealedSecret(url, requestBody) {
         }),
         body: JSON.stringify(requestBody)
     })
+
+    if (!response.ok) {
+        const error = await response.text()
+        throw(error)
+    }
+
+    return response.json()
+}
+
+async function fetchProjects() {
+    const response = await fetch("/api/projects")
 
     if (!response.ok) {
         const error = await response.text()
