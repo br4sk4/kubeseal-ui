@@ -9,9 +9,9 @@ import (
 func Seal(controllerNamespace, controllerName string, secret []byte) ([]byte, error) {
 	cmd := exec.Command("kubeseal", "--controller-namespace", controllerNamespace, "--controller-name", controllerName, "-o", "yaml")
 	stdin, err := cmd.StdinPipe()
+
 	if err != nil {
-		errorMessage, _ := cmd.CombinedOutput()
-		return nil, fmt.Errorf("%s", errorMessage)
+		return nil, err
 	}
 
 	go func() {
@@ -19,5 +19,11 @@ func Seal(controllerNamespace, controllerName string, secret []byte) ([]byte, er
 		io.WriteString(stdin, string(secret))
 	}()
 
-	return cmd.CombinedOutput()
+	message, err := cmd.CombinedOutput()
+
+	if err != nil {
+		return nil, fmt.Errorf("%s", message)
+	}
+
+	return message, nil
 }
