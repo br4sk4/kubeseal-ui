@@ -1,0 +1,75 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'helm/Chart.yaml'
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install yq
+        run: |
+          curl -o /usr/local/bin/yq -s https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod 0755 /usr/loca/bin/yq
+
+      - name: Set Version
+        run: |
+          VER=$(yq '.version' ./helm/Chart.yaml)
+          echo "VERSION=$VER" >> $GITHUB_ENV
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build/Push Docker Image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: docker/github.Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest,${{ env.REGISTRY }}/${{ github.repository }}:${{ env.VERSION }}
+
+  rerlease-helm-chart:
+    name: Release Helm Chart
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Run Chart Releaser
+        uses: helm/chart-releaser-action@v1.5.0
+        with:
+          charts_dir: helm
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_RELEASE_NAME_TEMPLATE: "{{ .Version }}"
+          CR_PAGES_INDEX_PATH: "charts/index.yaml"
