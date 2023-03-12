@@ -1,4 +1,4 @@
-module webseal
+module kubeseal-ui
 
 go 1.20
 

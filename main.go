@@ -1,7 +1,7 @@
 package main
 
 import (
-	"webseal/pkg/sealer"
+	"kubeseal-ui/pkg/sealer"
 )
 
 func main() {

@@ -16,7 +16,7 @@ function AppBar() {
                     <Heading size="xl" fontWeight="$bold">
                         <HStack spacing="15px">
                             <Image boxSize="40px" src={secretImage} alt="secret" objectFit="cover" />
-                            <Text css={{height: "30px", lineHeight: "30px"}}>WebSeal</Text>
+                            <Text css={{height: "30px", lineHeight: "30px"}}>KubeSeal UI</Text>
                         </HStack>
                     </Heading>
                 </Box>

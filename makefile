@@ -1,6 +1,6 @@
 .PHONY: backend
 backend:
-	GOOS=linux GOARCH=amd64 go build -o ./.dist/backend/webseal .
+	GOOS=linux GOARCH=amd64 go build -o ./.dist/backend/kubeseal-ui .
 
 .PHONY: frontend
 frontend:
@@ -8,4 +8,4 @@ frontend:
 
 .PHONY: docker-image
 docker-image: backend frontend
-	docker build -t naffets/webseal -f dockerfile.local .
+	docker build -t naffets/kubeseal-ui -f dockerfile.local .

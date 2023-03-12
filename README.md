@@ -1,1 +1,1 @@
-# webseal
+# kubeseal-ui

@@ -1,5 +1,5 @@
 frontend:
-  directory: "/opt/webseal/frontend"
+  directory: "/opt/kubeseal-ui/frontend"
 server:
   port: "3000"
   projects:
