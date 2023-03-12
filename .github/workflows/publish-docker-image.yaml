@@ -32,6 +32,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker Image => ${{ github.repository }}:dev
+        id: docker_build_dev
         uses: docker/build-push-action@v4
         if: ${{ github.event.release.tag_name == '' }}
         with:
@@ -41,6 +42,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest,${{ env.REGISTRY }}/${{ github.repository }}:dev
 
       - name: Build and push Docker Image => ${{ github.repository }}:${{ github.event.release.tag_name }}
+        id: docker_build_release
         uses: docker/build-push-action@v4
         if: ${{ github.event.release.tag_name != '' }}
         with:
