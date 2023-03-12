@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main
-  release:
-    types:
-      - published
+    push:
+      tags:
+        - '*'
 
 env:
   REGISTRY: ghcr.io
@@ -31,22 +31,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker Image => ${{ github.repository }}:dev
+      - name: Publish ${{ github.repository }}:dev
         id: docker_build_dev
         uses: docker/build-push-action@v4
-        if: ${{ github.event.release.tag_name == '' }}
+        if: ${{ github.ref_type == 'branch' }}
         with:
           context: .
           file: docker/github.Dockerfile
           push: true
           tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest,${{ env.REGISTRY }}/${{ github.repository }}:dev
 
-      - name: Build and push Docker Image => ${{ github.repository }}:${{ github.event.release.tag_name }}
+      - name: Publish ${{ github.repository }}:${{ github.ref_name }}
         id: docker_build_release
         uses: docker/build-push-action@v4
-        if: ${{ github.event.release.tag_name != '' }}
+        if: ${{ github.ref_type == 'tag' }}
         with:
           context: .
           file: docker/github.Dockerfile
           push: true
-          tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest,${{ env.REGISTRY }}/${{ github.repository }}:${{ github.event.release.tag_name }}
+          tags: ${{ env.REGISTRY }}/${{ github.repository }}:latest,${{ env.REGISTRY }}/${{ github.repository }}:${{ github.ref_name }}
