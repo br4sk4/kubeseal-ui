@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
+    paths:
       - 'frontend/**'
       - 'pkg/**'
       - 'main.go'
