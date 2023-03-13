@@ -1,26 +1,26 @@
 {
-    "name": "vite-template-solid",
-    "version": "0.0.0",
-    "description": "",
-    "scripts": {
-        "start": "vite",
-        "dev": "vite",
-        "build": "vite build",
-        "serve": "vite preview"
-    },
-    "license": "MIT",
-    "devDependencies": {
-        "prettier": "2.8.4",
-        "vite": "^4.1.1",
-        "vite-plugin-monaco-editor": "^1.1.0",
-        "vite-plugin-solid": "^2.5.0"
-    },
-    "dependencies": {
-        "@hope-ui/solid": "^0.6.7",
-        "@stitches/core": "^1.2.8",
-        "monaco-editor": "^0.36.1",
-        "solid-icons": "^1.0.1",
-        "solid-js": "^1.6.10",
-        "solid-transition-group": "^0.0.12"
-    }
+  "name": "vite-template-solid",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "2.8.4",
+    "vite": "^4.1.1",
+    "vite-plugin-monaco-editor": "^1.1.0",
+    "vite-plugin-solid": "^2.5.0"
+  },
+  "dependencies": {
+    "@hope-ui/solid": "^0.6.7",
+    "@stitches/core": "^1.2.8",
+    "monaco-editor": "^0.36.1",
+    "solid-icons": "^1.0.1",
+    "solid-js": "^1.6.10",
+    "solid-transition-group": "^0.0.12"
+  }
 }

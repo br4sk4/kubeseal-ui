@@ -1,5 +1,5 @@
 import { createStore } from "solid-js/store"
-import { Box, css, Flex, Grid, GridItem, HStack, Spacer } from "@hope-ui/solid"
+import { Box, css, Flex, Grid, GridItem, HStack } from "@hope-ui/solid"
 import CodeEditor from "../widgets/CodeEditor"
 import FormButton from "../widgets/FormButton"
 import SealingService from "../services/SealingService"
