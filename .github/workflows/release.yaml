@@ -21,7 +21,7 @@ jobs:
       - name: Install yq
         run: |
           curl -o /usr/local/bin/yq -s https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-          chmod 0755 /usr/loca/bin/yq
+          chmod 0755 /usr/local/bin/yq
 
       - name: Set Version
         run: |
