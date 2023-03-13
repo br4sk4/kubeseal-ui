@@ -29,7 +29,7 @@ jobs:
 
       - name: Set Version
         run: |
-          VER=$(yq '.version' ./helm/Chart.yaml)
+          VER=$(yq '.version' ./helm/kubeseal-ui/Chart.yaml)
           echo "VERSION=$VER" >> $GITHUB_ENV
 
       - name: Log in to the Container registry
