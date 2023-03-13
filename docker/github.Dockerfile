@@ -1,12 +1,3 @@
-FROM alpine:3.17 AS kubeseal-loader
-
-ENV KUBESEAL_VERSION=0.19.5
-WORKDIR /usr/local/src/kubeseal
-RUN wget https://github.com/bitnami-labs/sealed-secrets/releases/download/v$KUBESEAL_VERSION/kubeseal-$KUBESEAL_VERSION-linux-amd64.tar.gz
-RUN tar -xvzf kubeseal-$KUBESEAL_VERSION-linux-amd64.tar.gz kubeseal
-
-##################################################
-
 FROM golang:1.20.0-alpine3.16 AS go-builder
 
 WORKDIR /usr/local/src/kubeseal-ui
@@ -37,7 +28,6 @@ COPY --from=go-builder /usr/local/src/kubeseal-ui/go.mod /usr/local/src/kubeseal
 COPY --from=node-builder /usr/local/src/kubeseal-ui/frontend/package.json /usr/local/src/kubeseal-ui/frontend/yarn.lock /usr/local/src/kubeseal-ui/
 
 # copy distribution files
-COPY --from=kubeseal-loader /usr/local/src/kubeseal/kubeseal /usr/local/bin/kubeseal
 COPY --from=go-builder /usr/local/src/kubeseal-ui/.dist/backend/kubeseal-ui /usr/local/bin/kubeseal-ui
 COPY --from=node-builder /usr/local/src/kubeseal-ui/.dist/frontend /opt/kubeseal-ui/frontend
 
@@ -46,7 +36,6 @@ COPY --from=go-builder /usr/local/src/kubeseal-ui/.conf/config.docker.yaml /etc/
 
 # set permissions
 RUN chown 1001:1001 /etc/kubeseal-ui
-RUN chmod 0755 /usr/local/bin/kubeseal
 RUN chmod 0755 /usr/local/bin/kubeseal-ui
 
 # configure run

@@ -7,5 +7,12 @@ frontend:
 	yarn --cwd ./frontend run build
 
 .PHONY: docker-image
-docker-image: backend frontend
-	docker build -t naffets/kubeseal-ui -f dockerfile.local .
+docker-image:
+	docker build -t br4sk4/kubeseal-ui -f docker/local.Dockerfile .
+
+.PHONY: local-build
+local-build: backend frontend docker-image
+
+.PHONY: docker-build
+docker-build:
+	docker build -t br4sk4/kubeseal-ui -f docker/github.Dockerfile .
