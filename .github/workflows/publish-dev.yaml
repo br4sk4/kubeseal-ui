@@ -1,5 +1,4 @@
 name: publish-dev
-
 on:
   push:
     branches:
@@ -10,18 +9,16 @@ on:
       - 'main.go'
       - 'go.mod'
       - 'go.sum'
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
 jobs:
+
   build-and-push-image:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
     steps:
 
       - name: Checkout repository
