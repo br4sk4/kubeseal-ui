@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'helm/Chart.yaml'
+      - 'helm/kubeseal-ui/Chart.yaml'
 
 jobs:
   build-and-push-image:
