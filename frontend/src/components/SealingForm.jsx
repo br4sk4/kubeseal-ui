@@ -1,10 +1,10 @@
-import { createStore } from "solid-js/store";
-import {Box, css, Flex, Grid, GridItem, HStack, Spacer} from "@hope-ui/solid";
-import CodeEditor from "../widgets/CodeEditor";
-import FormButton from "../widgets/FormButton";
-import SealingService from "../services/SealingService";
-import FormSelect from "../widgets/FormSelect";
-import {onMount} from "solid-js";
+import { createStore } from "solid-js/store"
+import { Box, css, Flex, Grid, GridItem, HStack, Spacer } from "@hope-ui/solid"
+import CodeEditor from "../widgets/CodeEditor"
+import FormButton from "../widgets/FormButton"
+import SealingService from "../services/SealingService"
+import FormSelect from "../widgets/FormSelect"
+import { onMount } from "solid-js"
 
 const boxCSS = css({
     width: "100%",
@@ -47,7 +47,8 @@ function SealingForm() {
                     rawSecret: store.rawSecret,
                     sealedSecret: store.sealedSecret,
                 })
-            }).catch((error) => {
+            })
+            .catch((error) => {
                 // TODO (br4sk4): implement frontend notifications
                 console.log(error)
             })
@@ -65,18 +66,20 @@ function SealingForm() {
     const onSealButtonClick = () => {
         SealingService.sealSecret({
             project: store.project,
-            rawSecret: store.rawSecret
-        }).then((response) => {
-            setStore({
-                project: store.project,
-                projects: store.projects,
-                rawSecret: store.rawSecret,
-                sealedSecret: response.sealedSecret,
-            })
-        }).catch((error) => {
-            // TODO (br4sk4): implement frontend notifications
-            console.log(error)
+            rawSecret: store.rawSecret,
         })
+            .then((response) => {
+                setStore({
+                    project: store.project,
+                    projects: store.projects,
+                    rawSecret: store.rawSecret,
+                    sealedSecret: response.sealedSecret,
+                })
+            })
+            .catch((error) => {
+                // TODO (br4sk4): implement frontend notifications
+                console.log(error)
+            })
     }
 
     const onProjectSelectionChange = (value) => {
@@ -94,12 +97,27 @@ function SealingForm() {
                 <Box class={actionBoxCSS()}>
                     <Flex>
                         <Box flex="1" marginRight="10px">
-                            <FormSelect width="100%" options={store.projects} onChange={(value) => onProjectSelectionChange(value)} />
+                            <FormSelect
+                                width="100%"
+                                options={store.projects}
+                                onChange={(value) =>
+                                    onProjectSelectionChange(value)
+                                }
+                            />
                         </Box>
                         <Box>
                             <HStack spacing="10px">
-                            <FormButton id="reencryptButton" text="Reencrypt" width="120px" />
-                            <FormButton id="sealButton" text="Seal" width="120px" onClick={() => onSealButtonClick()} />
+                                <FormButton
+                                    id="reencryptButton"
+                                    text="Reencrypt"
+                                    width="120px"
+                                />
+                                <FormButton
+                                    id="sealButton"
+                                    text="Seal"
+                                    width="120px"
+                                    onClick={() => onSealButtonClick()}
+                                />
                             </HStack>
                         </Box>
                     </Flex>
@@ -111,7 +129,10 @@ function SealingForm() {
                                 id="rawSecret"
                                 title="Raw Secret"
                                 content={store.rawSecret}
-                                onChange={(value) => onRawSecretEditorChange(value)} />
+                                onChange={(value) =>
+                                    onRawSecretEditorChange(value)
+                                }
+                            />
                         </Box>
                     </GridItem>
                     <GridItem w="100%" h="100%">
@@ -120,7 +141,8 @@ function SealingForm() {
                                 id="sealedSecret"
                                 title="Sealed Secret"
                                 content={store.sealedSecret}
-                                readOnly={true} />
+                                readOnly={true}
+                            />
                         </Box>
                     </GridItem>
                 </Grid>

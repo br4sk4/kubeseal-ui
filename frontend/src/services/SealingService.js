@@ -16,14 +16,14 @@ async function fetchSealedSecret(url, requestBody) {
     const response = await fetch(url, {
         method: "POST",
         headers: new Headers({
-            "content-type": "application/json"
+            "content-type": "application/json",
         }),
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
     })
 
     if (!response.ok) {
         const error = await response.text()
-        throw(error)
+        throw error
     }
 
     return response.json()
@@ -34,7 +34,7 @@ async function fetchProjects() {
 
     if (!response.ok) {
         const error = await response.text()
-        throw(error)
+        throw error
     }
 
     return response.json()

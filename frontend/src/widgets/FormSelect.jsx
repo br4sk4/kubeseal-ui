@@ -36,7 +36,7 @@ const formSelectProps = {
         _active: {
             backgroundColor: "$primary6",
             color: "$primary8",
-        }
+        },
     },
 }
 
@@ -48,7 +48,9 @@ function FormSelect(props) {
     }
 
     return (
-        <Select value={props.value} onChange={(value) => changeSelection(value)}>
+        <Select
+            value={props.value}
+            onChange={(value) => changeSelection(value)}>
             <SelectTrigger {...props} {...formSelectProps}>
                 <SelectPlaceholder>select a project</SelectPlaceholder>
                 <SelectValue>

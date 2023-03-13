@@ -1,7 +1,7 @@
 import { HopeProvider } from "@hope-ui/solid"
 import Application from "./Application"
 
-window.addEventListener("contextmenu", e => e.preventDefault());
+window.addEventListener("contextmenu", (e) => e.preventDefault())
 
 function ApplicationProvider() {
     const config = {

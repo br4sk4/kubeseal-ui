@@ -1,10 +1,10 @@
-import 'monaco-editor/esm/vs/editor/editor.all.js';
-import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
+import "monaco-editor/esm/vs/editor/editor.all.js"
+import "monaco-editor/esm/vs/basic-languages/monaco.contribution"
 
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import * as monaco from "monaco-editor/esm/vs/editor/editor.api"
 
-import {createEffect, onMount} from "solid-js";
-import {Heading, useColorMode} from "@hope-ui/solid";
+import { createEffect, onMount } from "solid-js"
+import { Heading, useColorMode } from "@hope-ui/solid"
 
 function CodeEditor(props) {
     let editor
@@ -29,7 +29,7 @@ function CodeEditor(props) {
             if (typeof props.onChange === "function") {
                 props.onChange(editor.getValue())
             }
-        });
+        })
     })
 
     createEffect(() => {
@@ -42,8 +42,17 @@ function CodeEditor(props) {
 
     return (
         <>
-            <Heading paddingLeft="15px" paddingTop="5px" paddingBottom="5px" lineHeight="30px">{props.title}</Heading>
-            <div id={props.id} style="height: calc(100% - 40px); width: 100%;" />
+            <Heading
+                paddingLeft="15px"
+                paddingTop="5px"
+                paddingBottom="5px"
+                lineHeight="30px">
+                {props.title}
+            </Heading>
+            <div
+                id={props.id}
+                style="height: calc(100% - 40px); width: 100%;"
+            />
         </>
     )
 }

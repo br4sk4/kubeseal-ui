@@ -24,7 +24,7 @@ const formButtonCSS = css({
         "&:active": {
             backgroundColor: "$primary6",
             color: "$primary8",
-        }
+        },
     },
 })
 
@@ -32,7 +32,12 @@ function FormButton(props) {
     return (
         <>
             <Show when={!!props.icon}>
-                <IconButton variant="default" color="$color" class={formButtonCSS()} {...props} />
+                <IconButton
+                    variant="default"
+                    color="$color"
+                    class={formButtonCSS()}
+                    {...props}
+                />
             </Show>
             <Show when={!!props.text && props.text !== ""}>
                 <Button variant="default" class={formButtonCSS()} {...props}>
