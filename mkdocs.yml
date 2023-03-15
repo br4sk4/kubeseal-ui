@@ -4,22 +4,31 @@ repo_url: https://github.com/br4sk4/kubeseal-ui
 repo_name: br4sk4/kubeseal-ui
 docs_dir: docs
 site_dir: .dist/docs
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      use_pygments: true
+      linenums: true
+  - pymdownx.superfences
+  - admonition
 theme:
-    name: material
-    logo: assets/secret.png
-    favicon: assets/favicon.ico
-    palette:
-        -   media: "(prefers-color-scheme: light)"
-            scheme: light
-            primary: teal
-            accent: light blue
-            toggle:
-                icon: material/weather-sunny
-                name: Switch to dark mode
-        -   media: "(prefers-color-scheme: dark)"
-            scheme: slate
-            primary: teal
-            accent: light blue
-            toggle:
-                icon: material/weather-night
-                name: Switch to light mode
+  name: material
+  logo: assets/secret.png
+  favicon: assets/favicon.ico
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: light
+      primary: teal
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: light blue
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  features:
+    - content.code.copy
