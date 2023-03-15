@@ -16,12 +16,38 @@ responsible for managing secrets in one or more namespaces. A project configurat
 Configured projects are picked up by KubeSeal UI and are selectable in the web interface. The following examples will
 demonstrate two options to configure projects.
 
+---
+<br />
+
 ### Static Project Configuration
 
-!!! note
-    to be documented
+With the static project configuration you configure your projects in the helm values, so they get deployed into the
+container via a config file.
 
-### Dynamic Project Discovery
+1. Deploy Sealed-Secrets with defaults.
 
-!!! note
-    to be documented
+    ```bash
+    kubectl create namespace sealed-secrets
+    helm install sealed-secrets sealed-secrets/sealed-secrets -n sealed-secrets
+    ```
+
+2. Create a values.yaml file for KubeSeal UI with a staticly configured project.
+
+    ```yaml
+    config:
+      useStaticProjectConfiguration: true
+      projects:
+        - name: "sealed-secrets"
+          controllerName: "sealed-secrets"
+          controllerNamespace: "sealed-secrets"
+    ```
+
+3. Deploy KubeSeal UI with the defined values.yaml.
+
+    ```shell
+    kubectl create namespace kubeseal-ui
+    helm install kubeseal-ui kubeseal-ui/kubeseal-ui -n kubeseal-ui -f values.yaml
+    ```
+
+---
+<br />

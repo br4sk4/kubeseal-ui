@@ -29,31 +29,32 @@ Prerequisites:
 - Helm installed
 - kubectl installed and configured
 
-<br />
-Install the Helm repositories:
+Installation:
 
-```bash
-helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
-helm repo add kubeseal-ui https://br4sk4.github.io/kubeseal-ui/charts
-```
+1. Install the Helm repositories:
 
-<br />
-Deploy Sealed Secrets:
+    ```bash
+    helm repo add sealed-secrets https://bitnami-labs.github.io/sealed-secrets
+    helm repo add kubeseal-ui https://br4sk4.github.io/kubeseal-ui/charts
+    ```
 
-For further configuration of Sealed Secrets please refer to the
-official [repository](https://github.com/bitnami-labs/sealed-secrets).
+2. Deploy Sealed Secrets:
 
-```bash
-kubectl create namespace sealed-secrets
-helm install sealed-secrets sealed-secrets/sealed-secrets -n sealed-secrets
-```
+    For further configuration of Sealed Secrets please refer to the
+    official [repository](https://github.com/bitnami-labs/sealed-secrets).
 
-<br />
-Deploy KubeSeal-ui:
+    ```bash
+    kubectl create namespace sealed-secrets
+    helm install sealed-secrets sealed-secrets/sealed-secrets -n sealed-secrets
+    ```
 
-For further configuration and more complex scenarios refer to the [Getting Started Guide](getting-started.md).
+3. Deploy KubeSeal UI:
 
-```bash
-kubectl create namespace kubeseal-ui
-helm install kubeseal-ui kubeseal-ui/kubeseal-ui -n kubeseal-ui
-```
+    For further configuration and more complex scenarios refer to the [Getting Started Guide](getting-started.md).
+
+    ```bash
+    kubectl create namespace kubeseal-ui
+    helm install kubeseal-ui kubeseal-ui/kubeseal-ui -n kubeseal-ui
+    ```
+
+<br/>
