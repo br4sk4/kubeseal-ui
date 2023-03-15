@@ -85,7 +85,6 @@ config:
   port: 3000
   useStaticProjectConfiguration: true
   projects: [ ]
-#    - id: "sealed-secrets"
 #      name: "sealed-secrets"
 #      controllerName: "sealed-secrets"
 #      controllerNamespace: "sealed-secrets"

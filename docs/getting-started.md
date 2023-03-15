@@ -7,8 +7,7 @@ responsible for managing secrets in one or more namespaces. A project configurat
 
 ```json
 {
-    "id": "project-identifier",
-    "name": "visible-project-name",
+    "name": "project-name",
     "controllerName": "sealed-secrets-controller-name",
     "controllerNamespace": "sealed-secrets-controller-namespace"
 }

@@ -13,8 +13,7 @@ data:
       {{- if .Values.config.projects }}
         {{- toYaml .Values.config.projects | nindent 8 }}
       {{ else }}
-        - id: "sealed-secrets"
-          name: "sealed-secrets"
+        - name: "sealed-secrets"
           controllerName: "sealed-secrets"
           controllerNamespace: "sealed-secrets"
       {{ end }}
