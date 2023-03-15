@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kubeseal-ui-config
+data:
+  config.yaml: |
+    frontend:
+      directory: "/opt/kubeseal-ui/frontend"
+    server:
+      port: {{- toYaml .Values.config.port }}
+      {{- if .Values.config.useStaticProjectConfiguration }}
+      projects:
+      {{- if .Values.config.projects }}
+        {{- toYaml .Values.config.projects | nindent 8 }}
+      {{ else }}
+        - id: "sealed-secrets"
+          name: "sealed-secrets"
+          controllerName: "sealed-secrets"
+          controllerNamespace: "sealed-secrets"
+      {{ end }}
+      {{ else }}
+      projects: [ ]
+      {{ end }}
