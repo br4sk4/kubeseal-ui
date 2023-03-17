@@ -64,7 +64,7 @@ located. KubeSeal UI will periodically search for those namespaces and pick them
     apiVersion: v1
     kind: Namespace
     metadata:
-      name: "yet-another-ss-controller"
+      name: "sealed-secrets"
       labels:
         kubeseal-ui: "sealed-secrets"
       annotations:
