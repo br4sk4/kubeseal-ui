@@ -297,6 +297,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dynamic-project-discovery" class="md-nav__link">
+    Dynamic Project Discovery
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -351,6 +358,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#dynamic-project-discovery" class="md-nav__link">
+    Dynamic Project Discovery
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -393,7 +407,7 @@ demonstrate two options to configure projects.</p>
 <hr />
 <p><br /></p>
 <h3 id="static-project-configuration">Static Project Configuration</h3>
-<p>With the static project configuration you configure your projects in the helm values, so they get deployed into the
+<p>With the static project configuration you configure your projects in the helm values, so they get mounted into the
 container via a config file.</p>
 <ol>
 <li>
@@ -410,12 +424,14 @@ container via a config file.</p>
 <span class="normal"><a href="#__codelineno-2-3">3</a></span>
 <span class="normal"><a href="#__codelineno-2-4">4</a></span>
 <span class="normal"><a href="#__codelineno-2-5">5</a></span>
-<span class="normal"><a href="#__codelineno-2-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="nt">config</span><span class="p">:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">useStaticProjectConfiguration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="nt">projects</span><span class="p">:</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">      </span><span class="nt">controllerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">      </span><span class="nt">controllerNamespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
+<span class="normal"><a href="#__codelineno-2-6">6</a></span>
+<span class="normal"><a href="#__codelineno-2-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="nt">config</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">staticProjectConfiguration</span><span class="p">:</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">  </span><span class="nt">projects</span><span class="p">:</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w">      </span><span class="nt">controllerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w">      </span><span class="nt">controllerNamespace</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
 </code></pre></div></td></tr></table></div>
 </li>
 <li>
@@ -423,6 +439,63 @@ container via a config file.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
 <span class="normal"><a href="#__codelineno-3-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>kubeseal-ui
 <a id="__codelineno-3-2" name="__codelineno-3-2"></a>helm<span class="w"> </span>install<span class="w"> </span>kubeseal-ui<span class="w"> </span>kubeseal-ui/kubeseal-ui<span class="w"> </span>-n<span class="w"> </span>kubeseal-ui<span class="w"> </span>-f<span class="w"> </span>values.yaml
+</code></pre></div></td></tr></table></div>
+</li>
+</ol>
+<hr />
+<p><br /></p>
+<h3 id="dynamic-project-discovery">Dynamic Project Discovery</h3>
+<p>With the dynamic project discovery you just need to label/annotate the namespace where the sealed secrets controller is
+located. KubeSeal UI will periodically search for those namespaces and pick them up into its configuration.</p>
+<ol>
+<li>
+<p>Create a namespace.yaml file with labels and annotations.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span>
+<span class="normal"><a href="#__codelineno-4-6">6</a></span>
+<span class="normal"><a href="#__codelineno-4-7">7</a></span>
+<span class="normal"><a href="#__codelineno-4-8">8</a></span>
+<span class="normal"><a href="#__codelineno-4-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Namespace</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="nt">metadata</span><span class="p">:</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;yet-another-ss-controller&quot;</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w">    </span><span class="nt">kubeseal-ui</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w">    </span><span class="nt">kubeseal-ui/projectName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
+<a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w">    </span><span class="nt">kubeseal-ui/controllerName</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sealed-secrets&quot;</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>Deploy Sealed-Secrets with defaults.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1"></a>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>namespace.yaml
+<a id="__codelineno-5-2" name="__codelineno-5-2"></a>helm<span class="w"> </span>install<span class="w"> </span>sealed-secrets<span class="w"> </span>sealed-secrets/sealed-secrets<span class="w"> </span>-n<span class="w"> </span>sealed-secrets
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>Create a values.yaml file for KubeSeal UI with a staticly configured project.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span>
+<span class="normal"><a href="#__codelineno-6-6">6</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="nt">config</span><span class="p">:</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="w">  </span><span class="nt">staticProjectConfiguration</span><span class="p">:</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="w">  </span><span class="nt">dynamicProjectConfiguration</span><span class="p">:</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="w">    </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6"></a><span class="w">    </span><span class="nt">period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15m</span>
+</code></pre></div></td></tr></table></div>
+</li>
+<li>
+<p>Deploy KubeSeal UI with the defined values.yaml.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1"></a>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>kubeseal-ui
+<a id="__codelineno-7-2" name="__codelineno-7-2"></a>helm<span class="w"> </span>install<span class="w"> </span>kubeseal-ui<span class="w"> </span>kubeseal-ui/kubeseal-ui<span class="w"> </span>-n<span class="w"> </span>kubeseal-ui<span class="w"> </span>-f<span class="w"> </span>values.yaml
 </code></pre></div></td></tr></table></div>
 </li>
 </ol>
