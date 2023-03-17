@@ -8,14 +8,22 @@ data:
       directory: "/opt/kubeseal-ui/frontend"
     server:
       port: {{- toYaml .Values.config.port }}
-      {{- if .Values.config.useStaticProjectConfiguration }}
-      projects:
+      dynamicProjectDiscovery:
+        enabled: {{ .Values.config.dynamicProjectDiscovery.enabled }}
+        period: {{ .Values.config.dynamicProjectDiscovery.period }}
+      {{- if .Values.config.staticProjectConfiguration.enabled }}
       {{- if .Values.config.projects }}
+      projects:
         {{- toYaml .Values.config.projects | nindent 8 }}
       {{ else }}
+      {{- if eq .Values.config.dynamicProjectDiscovery.enabled false }}
+      projects:
         - name: "sealed-secrets"
           controllerName: "sealed-secrets"
           controllerNamespace: "sealed-secrets"
+      {{ else }}
+      projects: [ ]
+      {{ end }}
       {{ end }}
       {{ else }}
       projects: [ ]

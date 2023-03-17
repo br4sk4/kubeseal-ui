@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 )
 
 var (
@@ -27,6 +28,22 @@ func StartServer() {
 	mux.Handle("/api/reencrypt/", http.StripPrefix("/api/reencrypt", http.HandlerFunc(reencryptEnpointHandler)))
 	mux.Handle("/api/projects", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpoointHandler)))
 	mux.Handle("/api/projects/", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpoointHandler)))
+
+	if config.Server.DynamicProjectDiscovery.Enabled {
+		period, err := time.ParseDuration(config.Server.DynamicProjectDiscovery.Period)
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
+
+		config.DiscoverProjects()
+		go func() {
+			channel := time.Tick(period)
+			for range channel {
+				config.DiscoverProjects()
+			}
+		}()
+	}
 
 	log.Print(fmt.Sprintf("Listening on :%s ...", config.Server.Port))
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.Server.Port), mux); err != nil {

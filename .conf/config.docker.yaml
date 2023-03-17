@@ -2,7 +2,10 @@ frontend:
   directory: "/opt/kubeseal-ui/frontend"
 server:
   port: "3000"
-  projects:
-    - name: "sealed-secrets"
-      controllerName: "sealed-secrets"
-      controllerNamespace: "sealed-secrets"
+  dynamicProjectDiscovery:
+    enabled: false
+    period: 15m
+  projects: [ ]
+#    - name: "sealed-secrets"
+#      controllerName: "sealed-secrets"
+#      controllerNamespace: "sealed-secrets"

@@ -83,7 +83,11 @@ affinity: { }
 
 config:
   port: 3000
-  useStaticProjectConfiguration: true
+  staticProjectConfiguration:
+    enabled: true
+  dynamicProjectDiscovery:
+    enabled: false
+    period: 15m
   projects: [ ]
 #      name: "sealed-secrets"
 #      controllerName: "sealed-secrets"

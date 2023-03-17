@@ -34,7 +34,7 @@ func Seal(controllerNamespace, controllerName string, secret []byte) ([]byte, er
 		&result,
 		scheme.Codecs,
 		publicKey,
-		v1alpha1.DefaultScope,
+		v1alpha1.StrictScope,
 		false,
 		"",
 		"",
