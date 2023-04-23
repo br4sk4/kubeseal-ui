@@ -29,7 +29,7 @@ type Configuration struct {
 			Enabled bool   `yaml:"enabled"`
 			Period  string `yaml:"period"`
 		} `yaml:"dynamicProjectDiscovery"`
-	}
+	} `yaml:"server"`
 }
 
 func (c *Configuration) Get() error {

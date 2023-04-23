@@ -8,6 +8,7 @@ data:
       directory: "/opt/kubeseal-ui/frontend"
     server:
       port: {{- toYaml .Values.config.port }}
+      clusterName: {{- toYaml .Values.config.clusterName }}
       dynamicProjectDiscovery:
         enabled: {{ .Values.config.dynamicProjectDiscovery.enabled }}
         period: {{ .Values.config.dynamicProjectDiscovery.period }}
