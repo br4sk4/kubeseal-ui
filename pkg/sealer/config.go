@@ -24,6 +24,7 @@ type Configuration struct {
 	Server struct {
 		Port                    string    `yaml:"port"`
 		ClusterName             string    `yaml:"clusterName"`
+		Namespace               string    `yaml:"namespace"`
 		Projects                []Project `yaml:"projects"`
 		DynamicProjectDiscovery struct {
 			Enabled bool   `yaml:"enabled"`
@@ -88,7 +89,7 @@ func (c *Configuration) DiscoverClusters() []*Cluster {
 		Config: &clientConfig,
 	})
 
-	secrets, err := clientset.CoreV1().Secrets("").List(context.TODO(), v1.ListOptions{
+	secrets, err := clientset.CoreV1().Secrets(config.Server.Namespace).List(context.TODO(), v1.ListOptions{
 		LabelSelector: "kubeseal-ui/secret-type=cluster",
 	})
 	if err != nil {
