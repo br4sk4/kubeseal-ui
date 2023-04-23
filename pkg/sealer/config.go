@@ -2,11 +2,14 @@ package sealer
 
 import (
 	"context"
+	"crypto/sha1"
 	"flag"
+	"fmt"
 	"gopkg.in/yaml.v3"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
+	"log"
 	"os"
 )
 
@@ -20,6 +23,7 @@ type Configuration struct {
 	} `yaml:"frontend"`
 	Server struct {
 		Port                    string    `yaml:"port"`
+		ClusterName             string    `yaml:"clusterName"`
 		Projects                []Project `yaml:"projects"`
 		DynamicProjectDiscovery struct {
 			Enabled bool   `yaml:"enabled"`
@@ -51,22 +55,75 @@ func (c *Configuration) Get() error {
 	return nil
 }
 
-type Project struct {
-	Name                string `yaml:"name"`
-	ControllerName      string `yaml:"controllerName"`
-	ControllerNamespace string `yaml:"controllerNamespace"`
+type Cluster struct {
+	Name   string
+	Client *kubernetes.Clientset
+	Config *clientcmd.ClientConfig
 }
 
-func (c *Configuration) DiscoverProjects() {
+type Project struct {
+	ClusterName         string `yaml:"clusterName"`
+	ProjectName         string `yaml:"projectName"`
+	ControllerName      string `yaml:"controllerName"`
+	ControllerNamespace string `yaml:"controllerNamespace"`
+	Cluster             *Cluster
+}
+
+func (p Project) Hash() string {
+	return fmt.Sprintf("%x", sha1.Sum([]byte(p.ClusterName+"."+p.ProjectName)))
+}
+
+func (c *Configuration) DiscoverClusters() []*Cluster {
+	clusters := make([]*Cluster, 0)
+
 	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 	clientConfig := clientcmd.NewInteractiveDeferredLoadingClientConfig(loadingRules, nil, os.Stdout)
 
-	restConfig, _ := clientConfig.ClientConfig()
-	clientset, _ := kubernetes.NewForConfig(restConfig)
+	restConfig, err := clientConfig.ClientConfig()
+	clientset, err := kubernetes.NewForConfig(restConfig)
 
-	namespaces, _ := clientset.CoreV1().Namespaces().List(context.TODO(), v1.ListOptions{
+	clusters = append(clusters, &Cluster{
+		Name:   c.Server.ClusterName,
+		Client: clientset,
+		Config: &clientConfig,
+	})
+
+	secrets, err := clientset.CoreV1().Secrets("").List(context.TODO(), v1.ListOptions{
+		LabelSelector: "kubeseal-ui/secret-type=cluster",
+	})
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
+
+	for _, secret := range secrets.Items {
+		externalClientConfig, _ := clientcmd.NewClientConfigFromBytes(secret.Data["config"])
+		externalRestConfig, _ := externalClientConfig.ClientConfig()
+		externalClientset, _ := kubernetes.NewForConfig(externalRestConfig)
+
+		clusters = append(clusters, &Cluster{
+			Name:   secret.Labels["kubeseal-ui/cluster-name"],
+			Client: externalClientset,
+			Config: &externalClientConfig,
+		})
+	}
+
+	return clusters
+}
+
+func (c Configuration) DiscoverProjects() {
+	clusters := c.DiscoverClusters()
+	for _, cluster := range clusters {
+		c.discoverClusterProjects(cluster)
+	}
+}
+
+func (c *Configuration) discoverClusterProjects(cluster *Cluster) {
+	namespaces, err := cluster.Client.CoreV1().Namespaces().List(context.TODO(), v1.ListOptions{
 		LabelSelector: "kubeseal-ui=sealed-secrets",
 	})
+	if err != nil {
+		log.Fatalf("%s", err)
+	}
 
 	projects := make([]Project, 0)
 
@@ -77,19 +134,22 @@ func (c *Configuration) DiscoverProjects() {
 	c.Server.Projects = projects
 
 	for _, namespace := range namespaces.Items {
-		if ifProjectNotLoaded(namespace.Annotations["kubeseal-ui/projectName"]) {
+		log.Default().Printf("discovered project: %s (%s)\n", namespace.Annotations["kubeseal-ui/projectName"], cluster.Name)
+		if ifProjectNotLoaded(cluster.Name, namespace.Annotations["kubeseal-ui/projectName"]) {
 			config.Server.Projects = append(config.Server.Projects, Project{
-				Name:                namespace.Annotations["kubeseal-ui/projectName"],
+				ClusterName:         cluster.Name,
+				ProjectName:         namespace.Annotations["kubeseal-ui/projectName"],
 				ControllerName:      namespace.Annotations["kubeseal-ui/controllerName"],
-				ControllerNamespace: namespace.Name,
+				ControllerNamespace: namespace.Annotations["kubeseal-ui/controllerNamespace"],
+				Cluster:             cluster,
 			})
 		}
 	}
 }
 
-func ifProjectNotLoaded(projectName string) bool {
+func ifProjectNotLoaded(clusterName, projectName string) bool {
 	for _, project := range config.Server.Projects {
-		if project.Name == projectName {
+		if project.ClusterName == clusterName && project.ProjectName == projectName {
 			return false
 		}
 	}

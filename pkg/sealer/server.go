@@ -45,7 +45,7 @@ func StartServer() {
 		}()
 	}
 
-	log.Print(fmt.Sprintf("Listening on :%s ...", config.Server.Port))
+	log.Default().Printf("Listening on :%s ...", config.Server.Port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.Server.Port), mux); err != nil {
 		log.Fatal(err)
 	}
@@ -67,12 +67,12 @@ func sealEnpointHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	controllerNamespace, controllerName, err := getControllerInfo(requestBody.Project)
+	cluster, controllerNamespace, controllerName, err := getControllerInfo(requestBody.Project)
 	if !checkError(w, err, "error while searching project") {
 		return
 	}
 
-	sealedSecret, err := Seal(controllerNamespace, controllerName, []byte(requestBody.RawSecret))
+	sealedSecret, err := Seal(cluster, controllerNamespace, controllerName, []byte(requestBody.RawSecret))
 	if !checkError(w, err, "error while sealing secret") {
 		return
 	}
@@ -91,10 +91,13 @@ func reencryptEnpointHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func projectsEndpoointHandler(w http.ResponseWriter, r *http.Request) {
-	projects := make([]string, 0)
+	projects := make([]ProjectSelection, 0)
 
 	for _, project := range config.Server.Projects {
-		projects = append(projects, project.Name)
+		projects = append(projects, ProjectSelection{
+			Identifier: project.Hash(),
+			Label:      project.ProjectName + " (" + project.ClusterName + ")",
+		})
 	}
 
 	responseBody, err := json.Marshal(ProjectsResponseBody{Projects: projects})
@@ -106,14 +109,14 @@ func projectsEndpoointHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write(responseBody)
 }
 
-func getControllerInfo(projectName string) (string, string, error) {
+func getControllerInfo(projectId string) (*Cluster, string, string, error) {
 	for _, project := range config.Server.Projects {
-		if project.Name == projectName {
-			return project.ControllerNamespace, project.ControllerName, nil
+		if project.Hash() == projectId {
+			return project.Cluster, project.ControllerNamespace, project.ControllerName, nil
 		}
 	}
 
-	return "", "", fmt.Errorf("could not find project")
+	return nil, "", "", fmt.Errorf("could not find project")
 }
 
 func checkError(w http.ResponseWriter, err error, message string) (ok bool) {
@@ -142,5 +145,10 @@ type SealingResponseBody struct {
 }
 
 type ProjectsResponseBody struct {
-	Projects []string `json:"projects"`
+	Projects []ProjectSelection `json:"projects"`
+}
+
+type ProjectSelection struct {
+	Identifier string `json:"id"`
+	Label      string `json:"label"`
 }

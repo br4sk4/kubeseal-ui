@@ -83,6 +83,7 @@ affinity: { }
 
 config:
   port: 3000
+  clusterName: InCluster
   staticProjectConfiguration:
     enabled: true
   dynamicProjectDiscovery:

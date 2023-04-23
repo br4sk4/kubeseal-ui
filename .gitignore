@@ -2,3 +2,4 @@
 .idea
 .dist
 frontend/node_modules
+helm/sealed-secrets

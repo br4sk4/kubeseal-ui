@@ -2,6 +2,7 @@ frontend:
   directory: "/opt/kubeseal-ui/frontend"
 server:
   port: "3000"
+  clusterName: "InCluster"
   dynamicProjectDiscovery:
     enabled: false
     period: 15m

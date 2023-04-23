@@ -5,11 +5,11 @@ import {
     SelectListbox,
     SelectOption,
     SelectOptionIndicator,
-    SelectOptionText,
     SelectPlaceholder,
     SelectTrigger,
     SelectValue,
     Text,
+    VStack,
 } from "@hope-ui/solid"
 import { For } from "solid-js"
 
@@ -53,21 +53,17 @@ function FormSelect(props) {
             onChange={(value) => changeSelection(value)}>
             <SelectTrigger {...props} {...formSelectProps}>
                 <SelectPlaceholder>select a project</SelectPlaceholder>
-                <SelectValue>
-                    {({ selectedOptions }) =>
-                        selectedOptions.map((option) => (
-                            <Text>{option.value}</Text>
-                        ))
-                    }
-                </SelectValue>
+                <SelectValue />
                 <SelectIcon />
             </SelectTrigger>
             <SelectContent bg="$neutral1">
                 <SelectListbox>
                     <For each={props.options}>
-                        {(project) => (
-                            <SelectOption value={project}>
-                                <SelectOptionText>{project}</SelectOptionText>
+                        {(item) => (
+                            <SelectOption value={item.id} textValue={item.label} px="$3" py="$1">
+                                <VStack alignItems="flex-start">
+                                    <Text>{item.label}</Text>
+                                </VStack>
                                 <SelectOptionIndicator />
                             </SelectOption>
                         )}

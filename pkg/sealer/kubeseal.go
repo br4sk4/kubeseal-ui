@@ -3,21 +3,15 @@ package sealer
 import (
 	"bytes"
 	"context"
-	"os"
-
 	"github.com/bitnami-labs/sealed-secrets/pkg/apis/sealedsecrets/v1alpha1"
 	"github.com/bitnami-labs/sealed-secrets/pkg/kubeseal"
 	"k8s.io/client-go/kubernetes/scheme"
-	"k8s.io/client-go/tools/clientcmd"
 )
 
-func Seal(controllerNamespace, controllerName string, secret []byte) ([]byte, error) {
+func Seal(cluster *Cluster, controllerNamespace, controllerName string, secret []byte) ([]byte, error) {
 	var result bytes.Buffer
 
-	loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
-	clientConfig := clientcmd.NewInteractiveDeferredLoadingClientConfig(loadingRules, nil, os.Stdout)
-
-	certReader, err := kubeseal.OpenCert(context.TODO(), clientConfig, controllerNamespace, controllerName, "")
+	certReader, err := kubeseal.OpenCert(context.TODO(), *cluster.Config, controllerNamespace, controllerName, "")
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +22,7 @@ func Seal(controllerNamespace, controllerName string, secret []byte) ([]byte, er
 	}
 
 	err = kubeseal.Seal(
-		clientConfig,
+		*cluster.Config,
 		"yaml",
 		bytes.NewReader(secret),
 		&result,
