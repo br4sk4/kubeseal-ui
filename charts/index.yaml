@@ -2,6 +2,16 @@ apiVersion: v1
 entries:
   kubeseal-ui:
   - apiVersion: v2
+    appVersion: 0.3.0
+    created: "2023-04-24T00:43:07.797528479Z"
+    description: A Helm chart for Kubernetes
+    digest: 4bb2aadf64892123bbfa4c673cf0db8a7b18c679e25d53e48d55f4a113ff363d
+    name: kubeseal-ui
+    type: application
+    urls:
+    - https://github.com/br4sk4/kubeseal-ui/releases/download/0.3.0/kubeseal-ui-0.3.0.tgz
+    version: 0.3.0
+  - apiVersion: v2
     appVersion: 0.2.0
     created: "2023-03-17T15:35:55.449811478Z"
     description: A Helm chart for Kubernetes
@@ -21,4 +31,4 @@ entries:
     urls:
     - https://github.com/br4sk4/kubeseal-ui/releases/download/0.1.0/kubeseal-ui-0.1.0.tgz
     version: 0.1.0
-generated: "2023-03-17T15:35:55.449819577Z"
+generated: "2023-04-24T00:43:07.797541579Z"
