@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "kubeseal-ui"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "sealed-secrets"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "ns-a"
+  labels:
+    kubeseal-ui: "sealed-secrets"
+  annotations:
+    kubeseal-ui/projectName: "Application A"
+    kubeseal-ui/controllerName: "sealed-secrets"
+    kubeseal-ui/controllerNamespace: "sealed-secrets"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: "ns-b"
+  labels:
+    kubeseal-ui: "sealed-secrets"
+  annotations:
+    kubeseal-ui/projectName: "Application B"
+    kubeseal-ui/controllerName: "sealed-secrets"
+    kubeseal-ui/controllerNamespace: "sealed-secrets"

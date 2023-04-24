@@ -1,0 +1,46 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: secret-reader
+  namespace: kubeseal-ui
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "secrets" ]
+    verbs: [ "get", "watch", "list" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubeseal-ui-secret-reader
+  namespace: kubeseal-ui
+subjects:
+  - kind: ServiceAccount
+    name: kubeseal-ui
+    apiGroup: ""
+roleRef:
+  kind: Role
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: namespace-reader
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "namespaces" ]
+    verbs: [ "get", "watch", "list" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeseal-ui-namespace-reader
+subjects:
+  - kind: ServiceAccount
+    name: kubeseal-ui
+    namespace: kubeseal-ui
+    apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: namespace-reader
+  apiGroup: ""

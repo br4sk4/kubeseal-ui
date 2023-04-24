@@ -1,0 +1,143 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ printf "%s-secrets-unsealer" (include "sealed-secrets.fullname" .) }}
+  namespace: {{ include "sealed-secrets.namespace" . }}
+rules:
+  - apiGroups:
+      - bitnami.com
+    resources:
+      - sealedsecrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - bitnami.com
+    resources:
+      - sealedsecrets/status
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    resourceNames:
+      - {{ include "sealed-secrets.namespace" . }}
+    verbs:
+      - get
+---
+{{ range .Values.additionalNamespaces }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ printf "%s-secrets-unsealer" (include "sealed-secrets.fullname" $) }}
+  namespace: {{ . }}
+rules:
+  - apiGroups:
+      - bitnami.com
+    resources:
+      - sealedsecrets
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - bitnami.com
+    resources:
+      - sealedsecrets/status
+    verbs:
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - get
+      - list
+      - create
+      - update
+      - delete
+      - watch
+  - apiGroups:
+      - ""
+    resources:
+      - events
+    verbs:
+      - create
+      - patch
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    resourceNames:
+      - {{ . }}
+    verbs:
+      - get
+---
+{{ end }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ printf "%s-key-admin" (include "sealed-secrets.fullname" .) }}
+  namespace: {{ include "sealed-secrets.namespace" . }}
+rules:
+  - apiGroups:
+      - ""
+    resourceNames:
+      - {{ .Values.secretName }}
+    resources:
+      - secrets
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resources:
+      - secrets
+    verbs:
+      - create
+      - list
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ printf "%s-service-proxier" (include "sealed-secrets.fullname" .) }}
+  namespace: {{ include "sealed-secrets.namespace" . }}
+rules:
+  - apiGroups:
+      - ""
+    resourceNames:
+      - {{ include "sealed-secrets.fullname" . }}
+    resources:
+      - services
+    verbs:
+      - get
+  - apiGroups:
+      - ""
+    resourceNames:
+      - 'http:{{ include "sealed-secrets.fullname" . }}:'
+      - 'http:{{ include "sealed-secrets.fullname" . }}:http'
+      - {{ include "sealed-secrets.fullname" . }}
+    resources:
+      - services/proxy
+    verbs:
+      - create
+      - get
