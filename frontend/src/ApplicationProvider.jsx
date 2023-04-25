@@ -1,4 +1,4 @@
-import { HopeProvider } from "@hope-ui/solid"
+import {HopeProvider, NotificationsProvider} from "@hope-ui/solid"
 import Application from "./Application"
 
 window.addEventListener("contextmenu", (e) => e.preventDefault())
@@ -48,7 +48,9 @@ function ApplicationProvider() {
 
     return (
         <HopeProvider config={config}>
-            <Application />
+            <NotificationsProvider>
+                <Application />
+            </NotificationsProvider>
         </HopeProvider>
     )
 }

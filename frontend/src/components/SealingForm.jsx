@@ -1,5 +1,5 @@
 import { createStore } from "solid-js/store"
-import { Box, css, Flex, Grid, GridItem, HStack } from "@hope-ui/solid"
+import { Box, css, Flex, Grid, GridItem, HStack, notificationService } from "@hope-ui/solid"
 import CodeEditor from "../widgets/CodeEditor"
 import FormButton from "../widgets/FormButton"
 import SealingService from "../services/SealingService"
@@ -49,8 +49,11 @@ function SealingForm() {
                 })
             })
             .catch((error) => {
-                // TODO (br4sk4): implement frontend notifications
                 console.log(error)
+                notificationService.show({
+                    title: "Project Discovery Error",
+                    description: error
+                })
             })
     })
 
@@ -77,8 +80,11 @@ function SealingForm() {
                 })
             })
             .catch((error) => {
-                // TODO (br4sk4): implement frontend notifications
                 console.log(error)
+                notificationService.show({
+                    title: "Sealing Error",
+                    description: error
+                })
             })
     }
 
