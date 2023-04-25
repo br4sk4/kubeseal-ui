@@ -1,0 +1,52 @@
+{{- if .Values.rbac.create -}}
+{{- if .Values.rbac.secretReader -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: kubeseal-ui-secret-reader
+  namespace: {{ .Release.Namespace }}
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "secrets" ]
+    verbs: [ "get", "watch", "list" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubeseal-ui-secret-reader
+  namespace: {{ .Release.Namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "kubeseal-ui.serviceAccountName" . }}
+    apiGroup: ""
+roleRef:
+  kind: Role
+  name: kubeseal-ui-secret-reader
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
+---
+{{- if .Values.rbac.namespaceReader -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kubeseal-ui-namespace-reader
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "namespaces" ]
+    verbs: [ "get", "watch", "list" ]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubeseal-ui-namespace-reader
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "kubeseal-ui.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+    apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: kubeseal-ui-namespace-reader
+  apiGroup: ""
+{{- end -}}
+{{- end -}}
