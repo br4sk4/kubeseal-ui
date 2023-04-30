@@ -40,7 +40,7 @@ function ApplicationProvider() {
                             default: "#222222",
                         }),
                         ...(colorMode === "light" && {
-                            default: "#eeeeee",
+                            default: "#dddddd",
                         }),
                     },
                     primary: {
@@ -51,11 +51,13 @@ function ApplicationProvider() {
                         ...(colorMode === "dark" && {
                             main: "#222222",
                             dark: "#222222",
+                            border: "#dddddd",
                             contrastText: "#ffffff",
                         }),
                         ...(colorMode === "light" && {
-                            main: "#eeeeee",
-                            light: "#eeeeee",
+                            main: "#dddddd",
+                            light: "#dddddd",
+                            border: "#222222",
                             contrastText: "#000000",
                         }),
                     },
