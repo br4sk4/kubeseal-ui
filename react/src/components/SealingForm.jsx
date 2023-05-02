@@ -1,4 +1,4 @@
-import { Box, Grid, Stack } from "@mui/material"
+import { Alert, Box, Grid, Snackbar, Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import CodeEditor from "../widgets/CodeEditor"
 import FormButton from "../widgets/FormButton"
@@ -32,6 +32,7 @@ const EditorBox = styled(Box)(({ theme }) => ({
 }))
 
 function SealingForm() {
+    const [notification, setNotification] = useState({ open: false, message: "" })
     const [project, setProject] = useState("")
     const [projects, setProjects] = useState([])
     const [sourceSecret, setSourceSecret] = useState("")
@@ -43,8 +44,11 @@ function SealingForm() {
                 setProjects(response.projects)
             })
             .catch((error) => {
-                // TODO (br4sk4): implement frontend notifications
                 console.log(error)
+                setNotification({
+                    open: true,
+                    message: error,
+                })
             })
     }, [])
 
@@ -57,6 +61,7 @@ function SealingForm() {
     }
 
     const onSealButtonClick = () => {
+        setSealedSecret("")
         SealingService.sealSecret({
             project: project,
             sourceSecret: sourceSecret,
@@ -65,12 +70,16 @@ function SealingForm() {
                 setSealedSecret(response.sealedSecret)
             })
             .catch((error) => {
-                // TODO (br4sk4): implement frontend notifications
                 console.log(error)
+                setNotification({
+                    open: true,
+                    message: error,
+                })
             })
     }
 
     const onReencryptButtonClick = () => {
+        setSealedSecret("")
         SealingService.reencryptSecret({
             project: project,
             sourceSecret: sourceSecret,
@@ -79,9 +88,23 @@ function SealingForm() {
                 setSealedSecret(response.sealedSecret)
             })
             .catch((error) => {
-                // TODO (br4sk4): implement frontend notifications
                 console.log(error)
+                setNotification({
+                    open: true,
+                    message: error,
+                })
             })
+    }
+
+    const closeNotification = (event, reason) => {
+        if (reason === "clickaway") {
+            return
+        }
+
+        setNotification({
+            open: false,
+            message: "",
+        })
     }
 
     return (
@@ -139,6 +162,15 @@ function SealingForm() {
                     </Grid>
                 </Grid>
             </FormBox>
+            <Snackbar
+                open={notification.open}
+                autoHideDuration={5000}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                onClose={closeNotification}>
+                <Alert onClose={closeNotification} severity="error" sx={{ width: "100%" }}>
+                    {notification.message}
+                </Alert>
+            </Snackbar>
         </FormBox>
     )
 }
