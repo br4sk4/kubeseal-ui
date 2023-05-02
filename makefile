@@ -4,6 +4,7 @@ backend:
 
 .PHONY: frontend
 frontend:
+	yarn --cwd ./frontend install
 	yarn --cwd ./frontend run build
 
 .PHONY: docker-image
