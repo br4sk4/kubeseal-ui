@@ -37,10 +37,10 @@ function ApplicationProvider() {
                     mode: colorMode,
                     background: {
                         ...(colorMode === "dark" && {
-                            default: "#222222",
+                            default: "#1e1e1e",
                         }),
                         ...(colorMode === "light" && {
-                            default: "#dddddd",
+                            default: "#fffffe",
                         }),
                     },
                     primary: {
@@ -49,15 +49,15 @@ function ApplicationProvider() {
                     },
                     neutral: {
                         ...(colorMode === "dark" && {
-                            main: "#222222",
-                            dark: "#222222",
-                            border: "#dddddd",
+                            main: "#151617",
+                            dark: "#151617",
+                            border: "#697177",
                             contrastText: "#ffffff",
                         }),
                         ...(colorMode === "light" && {
-                            main: "#dddddd",
-                            light: "#dddddd",
-                            border: "#222222",
+                            main: "#eae9e8",
+                            light: "#eae9e8",
+                            border: "#697177",
                             contrastText: "#000000",
                         }),
                     },

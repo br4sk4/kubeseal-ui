@@ -1,10 +1,11 @@
-import { AppBar, Box, Button, Stack, Typography } from "@mui/material"
+import { AppBar, Box, Stack, Typography } from "@mui/material"
 import { useTheme } from "@mui/material/styles"
 import LightModeIcon from "@mui/icons-material/LightModeOutlined"
 import DarkModeIcon from "@mui/icons-material/DarkModeOutlined"
 import secretImage from "../assets/secret.png"
 import { ColorModeContext } from "../ApplicationProvider"
 import { useContext } from "react"
+import FormButton from "../widgets/FormButton"
 
 function ApplicationBar() {
     const theme = useTheme()
@@ -35,7 +36,7 @@ function ApplicationBar() {
                             }}>
                             KubeSeal UI
                         </Typography>
-                        <Button
+                        <FormButton
                             onClick={colorMode.toggleColorMode}
                             sx={{
                                 padding: "0",
@@ -46,15 +47,11 @@ function ApplicationBar() {
                             variant="contained"
                             color="neutral">
                             {theme.palette.mode === "dark" ? (
-                                <LightModeIcon
-                                    sx={{ width: "16px", height: "16px" }}
-                                />
+                                <LightModeIcon sx={{ width: "16px", height: "16px" }} />
                             ) : (
-                                <DarkModeIcon
-                                    sx={{ width: "16px", height: "16px" }}
-                                />
+                                <DarkModeIcon sx={{ width: "16px", height: "16px" }} />
                             )}
-                        </Button>
+                        </FormButton>
                     </Stack>
                 </Box>
             </AppBar>
