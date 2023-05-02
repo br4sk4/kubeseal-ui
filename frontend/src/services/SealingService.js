@@ -22,8 +22,7 @@ async function fetchSealedSecret(url, requestBody) {
     })
 
     if (!response.ok) {
-        const error = await response.text()
-        throw error
+        throw await response.text()
     }
 
     return response.json()
@@ -33,8 +32,7 @@ async function fetchProjects() {
     const response = await fetch("/api/projects")
 
     if (!response.ok) {
-        const error = await response.text()
-        throw error
+        throw await response.text()
     }
 
     return response.json()

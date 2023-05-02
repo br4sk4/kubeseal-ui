@@ -26,8 +26,8 @@ func StartServer() {
 	mux.Handle("/api/seal/", http.StripPrefix("/api/seal", http.HandlerFunc(sealEnpointHandler)))
 	mux.Handle("/api/reencrypt", http.StripPrefix("/api/reencrypt", http.HandlerFunc(reencryptEnpointHandler)))
 	mux.Handle("/api/reencrypt/", http.StripPrefix("/api/reencrypt", http.HandlerFunc(reencryptEnpointHandler)))
-	mux.Handle("/api/projects", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpoointHandler)))
-	mux.Handle("/api/projects/", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpoointHandler)))
+	mux.Handle("/api/projects", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpointHandler)))
+	mux.Handle("/api/projects/", http.StripPrefix("/api/projects", http.HandlerFunc(projectsEndpointHandler)))
 
 	if config.Server.DynamicProjectDiscovery.Enabled {
 		period, err := time.ParseDuration(config.Server.DynamicProjectDiscovery.Period)
@@ -72,25 +72,57 @@ func sealEnpointHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sealedSecret, err := Seal(cluster, controllerNamespace, controllerName, []byte(requestBody.RawSecret))
+	sealedSecret, err := Seal(cluster, controllerNamespace, controllerName, []byte(requestBody.SourceSecret))
+	if !checkError(w, err, "error while reencrypting secret") {
+		return
+	}
+
+	responseBody, err := json.Marshal(SealingResponseBody{SealedSecret: string(sealedSecret)})
+	if !checkError(w, err, "error while marshalling response body") {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	_, err = w.Write(responseBody)
+	if !checkError(w, err, "error while writing response body") {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+}
+
+func reencryptEnpointHandler(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+	if !checkError(w, err, "error while reading secret") {
+		return
+	}
+
+	var requestBody SealingRequestBody
+	if !checkError(w, json.Unmarshal(body, &requestBody), "error while unmarshalling request body") {
+		return
+	}
+
+	cluster, controllerNamespace, controllerName, err := getControllerInfo(requestBody.Project)
+	if !checkError(w, err, "error while searching project") {
+		return
+	}
+
+	sealedSecret, err := Reencrypt(cluster, controllerNamespace, controllerName, []byte(requestBody.SourceSecret))
 	if !checkError(w, err, "error while sealing secret") {
 		return
 	}
 
 	responseBody, err := json.Marshal(SealingResponseBody{SealedSecret: string(sealedSecret)})
-	if !checkError(w, err, "error while marashalling response body") {
+	if !checkError(w, err, "error while marshalling response body") {
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseBody)
+	_, err = w.Write(responseBody)
+	if !checkError(w, err, "error while writing response body") {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
-func reencryptEnpointHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusOK)
-}
-
-func projectsEndpoointHandler(w http.ResponseWriter, r *http.Request) {
+func projectsEndpointHandler(w http.ResponseWriter, r *http.Request) {
 	projects := make([]ProjectSelection, 0)
 
 	for _, project := range config.Server.Projects {
@@ -101,12 +133,15 @@ func projectsEndpoointHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	responseBody, err := json.Marshal(ProjectsResponseBody{Projects: projects})
-	if !checkError(w, err, "error while marashalling response body") {
+	if !checkError(w, err, "error while marshalling response body") {
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseBody)
+	_, err = w.Write(responseBody)
+	if !checkError(w, err, "error while writing response body") {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }
 
 func getControllerInfo(projectId string) (*Cluster, string, string, error) {
@@ -132,12 +167,15 @@ func checkError(w http.ResponseWriter, err error, message string) (ok bool) {
 func handleError(w http.ResponseWriter, err error) {
 	log.Default().Println(err)
 	w.WriteHeader(http.StatusInternalServerError)
-	w.Write([]byte(err.Error()))
+	_, err = w.Write([]byte(err.Error()))
+	if err != nil {
+		log.Default().Println(err)
+	}
 }
 
 type SealingRequestBody struct {
-	Project   string `json:"project"`
-	RawSecret string `json:"rawSecret"`
+	Project      string `json:"project"`
+	SourceSecret string `json:"sourceSecret"`
 }
 
 type SealingResponseBody struct {

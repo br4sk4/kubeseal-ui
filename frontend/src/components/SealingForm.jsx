@@ -1,153 +1,177 @@
-import { createStore } from "solid-js/store"
-import { Box, css, Flex, Grid, GridItem, HStack } from "@hope-ui/solid"
+import { Alert, Box, Grid, Snackbar, Stack } from "@mui/material"
+import { styled } from "@mui/material/styles"
 import CodeEditor from "../widgets/CodeEditor"
 import FormButton from "../widgets/FormButton"
+import ProjectSelection from "../widgets/ProjectSelection"
 import SealingService from "../services/SealingService"
-import FormSelect from "../widgets/FormSelect"
-import { onMount } from "solid-js"
+import { useEffect, useState } from "react"
 
-const boxCSS = css({
+const FormBox = styled(Box)(() => ({
     width: "100%",
     height: "100%",
-    backgroundColor: "$background",
-})
+}))
 
-const actionBoxCSS = css({
+const SelectionBox = styled(Box)(({ theme }) => ({
     width: "100%",
     height: "60px",
-    border: "solid 1px $neutral9",
-    borderRadius: "$lg",
     padding: "10px",
-})
+    border: "solid 1px",
+    borderRadius: "10px",
+    borderColor: theme.palette.neutral.border,
+}))
 
-const editorBoxCSS = css({
+const EditorBox = styled(Box)(({ theme }) => ({
     width: "100%",
     height: "calc(100% - 80px)",
-    backgroundColor: "$neutral1",
-    border: "solid 1px $neutral9",
-    borderRadius: "$lg",
     marginTop: "20px",
     paddingBottom: "15px",
-})
+    border: "solid 1px",
+    borderRadius: "10px",
+    borderColor: theme.palette.neutral.border,
+    backgroundColor: theme.palette.neutral.main,
+}))
 
 function SealingForm() {
-    const [store, setStore] = createStore({
-        project: "",
-        projects: [],
-        rawSecret: "",
-        sealedSecret: "",
-    })
+    const [notification, setNotification] = useState({ open: false, message: "" })
+    const [project, setProject] = useState("")
+    const [projects, setProjects] = useState([])
+    const [sourceSecret, setSourceSecret] = useState("")
+    const [sealedSecret, setSealedSecret] = useState("")
 
-    onMount(() => {
+    useEffect(() => {
         SealingService.getProjects()
             .then((response) => {
-                setStore({
-                    project: store.project,
-                    projects: response.projects,
-                    rawSecret: store.rawSecret,
-                    sealedSecret: store.sealedSecret,
-                })
+                setProjects(response.projects)
             })
             .catch((error) => {
-                // TODO (br4sk4): implement frontend notifications
                 console.log(error)
+                setNotification({
+                    open: true,
+                    message: error,
+                })
             })
-    })
+    }, [])
 
-    const onRawSecretEditorChange = (value) => {
-        setStore({
-            project: store.project,
-            projects: store.projects,
-            rawSecret: value,
-            sealedSecret: store.sealedSecret,
-        })
+    const onProjectSelectionChange = (value) => {
+        setProject(value)
+    }
+
+    const onSourceSecretEditorChange = (value) => {
+        setSourceSecret(value)
     }
 
     const onSealButtonClick = () => {
+        setSealedSecret("")
         SealingService.sealSecret({
-            project: store.project,
-            rawSecret: store.rawSecret,
+            project: project,
+            sourceSecret: sourceSecret,
         })
             .then((response) => {
-                setStore({
-                    project: store.project,
-                    projects: store.projects,
-                    rawSecret: store.rawSecret,
-                    sealedSecret: response.sealedSecret,
-                })
+                setSealedSecret(response.sealedSecret)
             })
             .catch((error) => {
-                // TODO (br4sk4): implement frontend notifications
                 console.log(error)
+                setNotification({
+                    open: true,
+                    message: error,
+                })
             })
     }
 
-    const onProjectSelectionChange = (value) => {
-        setStore({
-            project: value,
-            projects: store.projects,
-            rawSecret: store.rawSecret,
-            sealedSecret: store.sealedSecret,
+    const onReencryptButtonClick = () => {
+        setSealedSecret("")
+        SealingService.reencryptSecret({
+            project: project,
+            sourceSecret: sourceSecret,
+        })
+            .then((response) => {
+                setSealedSecret(response.sealedSecret)
+            })
+            .catch((error) => {
+                console.log(error)
+                setNotification({
+                    open: true,
+                    message: error,
+                })
+            })
+    }
+
+    const closeNotification = (event, reason) => {
+        if (reason === "clickaway") {
+            return
+        }
+
+        setNotification({
+            open: false,
+            message: "",
         })
     }
 
     return (
-        <Box class={boxCSS()}>
-            <Box class={boxCSS()}>
-                <Box class={actionBoxCSS()}>
-                    <Flex>
-                        <Box flex="1" marginRight="10px">
-                            <FormSelect
-                                width="100%"
-                                options={store.projects}
-                                onChange={(value) =>
-                                    onProjectSelectionChange(value)
-                                }
+        <FormBox>
+            <SelectionBox>
+                <Box sx={{ flexGrow: 1 }}>
+                    <Stack direction="row" spacing="10px">
+                        <Box sx={{ flexGrow: 1 }}>
+                            <ProjectSelection
+                                options={projects}
+                                onChange={(value) => onProjectSelectionChange(value)}
                             />
                         </Box>
-                        <Box>
-                            <HStack spacing="10px">
-                                <FormButton
-                                    id="reencryptButton"
-                                    text="Reencrypt"
-                                    width="120px"
-                                />
-                                <FormButton
-                                    id="sealButton"
-                                    text="Seal"
-                                    width="120px"
-                                    onClick={() => onSealButtonClick()}
-                                />
-                            </HStack>
+                        <Box sx={{ width: "120px" }}>
+                            <FormButton
+                                variant="outlined"
+                                color="primary"
+                                sx={{ width: "100%", height: "40px" }}
+                                onClick={() => onReencryptButtonClick()}>
+                                Reencrypt
+                            </FormButton>
                         </Box>
-                    </Flex>
+                        <Box sx={{ width: "120px" }}>
+                            <FormButton
+                                variant="outlined"
+                                color="primary"
+                                sx={{ width: "100%", height: "40px" }}
+                                onClick={() => onSealButtonClick()}>
+                                Seal
+                            </FormButton>
+                        </Box>
+                    </Stack>
                 </Box>
-                <Grid height="100%" templateColumns="repeat(2, 1fr)" gap="20px">
-                    <GridItem w="100%" h="100%">
-                        <Box class={editorBoxCSS()}>
+            </SelectionBox>
+            <FormBox>
+                <Grid display="container" sx={{ height: "100%" }} columns={12}>
+                    <Grid item container xs={6}>
+                        <EditorBox sx={{ marginRight: "10px" }}>
                             <CodeEditor
-                                id="rawSecret"
-                                title="Raw Secret"
-                                content={store.rawSecret}
-                                onChange={(value) =>
-                                    onRawSecretEditorChange(value)
-                                }
+                                id="sourceSecret"
+                                title="Source Secret"
+                                onChange={(value) => onSourceSecretEditorChange(value)}
                             />
-                        </Box>
-                    </GridItem>
-                    <GridItem w="100%" h="100%">
-                        <Box class={editorBoxCSS()}>
+                        </EditorBox>
+                    </Grid>
+                    <Grid item container xs={6}>
+                        <EditorBox sx={{ marginLeft: "10px" }}>
                             <CodeEditor
                                 id="sealedSecret"
                                 title="Sealed Secret"
-                                content={store.sealedSecret}
+                                content={sealedSecret}
                                 readOnly={true}
                             />
-                        </Box>
-                    </GridItem>
+                        </EditorBox>
+                    </Grid>
                 </Grid>
-            </Box>
-        </Box>
+            </FormBox>
+            <Snackbar
+                open={notification.open}
+                autoHideDuration={5000}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                onClose={closeNotification}>
+                <Alert onClose={closeNotification} severity="error" sx={{ width: "100%" }}>
+                    {notification.message}
+                </Alert>
+            </Snackbar>
+        </FormBox>
     )
 }
 
