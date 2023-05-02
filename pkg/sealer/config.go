@@ -119,6 +119,8 @@ func (c Configuration) DiscoverProjects() {
 }
 
 func (c *Configuration) discoverClusterProjects(cluster *Cluster) {
+	log.Default().Print("discovering projects ...")
+
 	namespaces, err := cluster.Client.CoreV1().Namespaces().List(context.TODO(), v1.ListOptions{
 		LabelSelector: "kubeseal-ui=sealed-secrets",
 	})
@@ -126,17 +128,22 @@ func (c *Configuration) discoverClusterProjects(cluster *Cluster) {
 		log.Fatalf("%s", err)
 	}
 
+	oldProjects := config.Server.Projects
+
 	projects := make([]Project, 0)
 
 	for _, project := range staticProjects {
 		projects = append(projects, project)
 	}
 
-	c.Server.Projects = projects
+	config.Server.Projects = projects
 
 	for _, namespace := range namespaces.Items {
-		log.Default().Printf("discovered project: %s (%s)\n", namespace.Annotations["kubeseal-ui/projectName"], cluster.Name)
-		if ifProjectNotLoaded(cluster.Name, namespace.Annotations["kubeseal-ui/projectName"]) {
+		if !containsProject(&oldProjects, cluster.Name, namespace.Annotations["kubeseal-ui/projectName"]) {
+			log.Default().Printf("discovered project: %s (%s)\n", namespace.Annotations["kubeseal-ui/projectName"], cluster.Name)
+		}
+
+		if !containsProject(&config.Server.Projects, cluster.Name, namespace.Annotations["kubeseal-ui/projectName"]) {
 			config.Server.Projects = append(config.Server.Projects, Project{
 				ClusterName:         cluster.Name,
 				ProjectName:         namespace.Annotations["kubeseal-ui/projectName"],
@@ -148,11 +155,11 @@ func (c *Configuration) discoverClusterProjects(cluster *Cluster) {
 	}
 }
 
-func ifProjectNotLoaded(clusterName, projectName string) bool {
-	for _, project := range config.Server.Projects {
-		if project.ClusterName == clusterName && project.ProjectName == projectName {
-			return false
+func containsProject(projects *[]Project, clusterName, projectName string) bool {
+	for _, project := range *projects {
+		if clusterName == project.ClusterName && projectName == project.ProjectName {
+			return true
 		}
 	}
-	return true
+	return false
 }

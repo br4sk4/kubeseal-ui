@@ -45,7 +45,7 @@ func StartServer() {
 		}()
 	}
 
-	log.Default().Printf("Listening on :%s ...", config.Server.Port)
+	log.Default().Printf("listening on :%s ...", config.Server.Port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.Server.Port), mux); err != nil {
 		log.Fatal(err)
 	}
