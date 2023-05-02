@@ -70,6 +70,20 @@ function SealingForm() {
             })
     }
 
+    const onReencryptButtonClick = () => {
+        SealingService.reencryptSecret({
+            project: project,
+            sourceSecret: sourceSecret,
+        })
+            .then((response) => {
+                setSealedSecret(response.sealedSecret)
+            })
+            .catch((error) => {
+                // TODO (br4sk4): implement frontend notifications
+                console.log(error)
+            })
+    }
+
     return (
         <FormBox>
             <SelectionBox>
@@ -82,7 +96,11 @@ function SealingForm() {
                             />
                         </Box>
                         <Box sx={{ width: "120px" }}>
-                            <FormButton variant="outlined" color="primary" sx={{ width: "100%", height: "40px" }}>
+                            <FormButton
+                                variant="outlined"
+                                color="primary"
+                                sx={{ width: "100%", height: "40px" }}
+                                onClick={() => onReencryptButtonClick()}>
                                 Reencrypt
                             </FormButton>
                         </Box>

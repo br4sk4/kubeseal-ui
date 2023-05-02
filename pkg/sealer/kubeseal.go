@@ -40,3 +40,24 @@ func Seal(cluster *Cluster, controllerNamespace, controllerName string, secret [
 
 	return result.Bytes(), nil
 }
+
+func Reencrypt(cluster *Cluster, controllerNamespace, controllerName string, secret []byte) ([]byte, error) {
+	var result bytes.Buffer
+
+	err := kubeseal.ReEncryptSealedSecret(
+		context.TODO(),
+		*cluster.Config,
+		controllerNamespace,
+		controllerName,
+		"yaml",
+		bytes.NewReader(secret),
+		&result,
+		scheme.Codecs,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return result.Bytes(), nil
+}
