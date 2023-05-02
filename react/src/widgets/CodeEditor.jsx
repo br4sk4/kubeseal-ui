@@ -12,6 +12,7 @@ function CodeEditor(props) {
 
     useEffect(() => {
         let container = document.getElementById(props.id)
+
         editor = monaco.editor.create(container, {
             value: "",
             language: "yaml",
@@ -23,11 +24,21 @@ function CodeEditor(props) {
             automaticLayout: true,
             readOnly: props.readOnly,
             theme: "vs-" + theme.palette.mode,
+            model: monaco.editor.createModel(props.content, "yaml", monaco.Uri.parse(props.id)),
+        })
+
+        editor.getModel().onDidChangeContent(() => {
+            if (props.id === "sourceSecret" && typeof props.onChange === "function") {
+                props.onChange(editor.getValue())
+            }
         })
     }, [])
 
     useEffect(() => {
         monaco.editor.setTheme("vs-" + theme.palette.mode)
+        if (props.id === "sealedSecret") {
+            monaco.editor.getModel(monaco.Uri.parse(props.id)).setValue(props.content)
+        }
     })
 
     return (
