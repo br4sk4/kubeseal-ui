@@ -1,6 +1,6 @@
-import { render } from "solid-js/web"
-
-import "./index.css"
+import React from "react"
+import ReactDOM from "react-dom/client"
 import ApplicationProvider from "./ApplicationProvider"
+import "./index.css"
 
-render(() => <ApplicationProvider />, document.getElementById("root"))
+ReactDOM.createRoot(document.getElementById("root")).render(<ApplicationProvider />)

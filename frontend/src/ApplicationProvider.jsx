@@ -1,55 +1,78 @@
-import { HopeProvider } from "@hope-ui/solid"
 import Application from "./Application"
+import { CssBaseline } from "@mui/material"
+import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { createContext, useMemo, useState } from "react"
 
-window.addEventListener("contextmenu", (e) => e.preventDefault())
+export const ColorModeContext = createContext({
+    toggleColorMode: () => {},
+})
 
 function ApplicationProvider() {
-    const config = {
-        initialColorMode: "dark",
-        darkTheme: {
-            colors: {
-                primary: "#009485",
-                background: "#1e1e1e",
-                color: "white",
-                primary1: "#004040",
-                primary2: "#004b4b",
-                primary3: "#005555",
-                primary4: "#006060",
-                primary5: "#006b6b",
-                primary6: "#007575",
-                primary7: "#00a0a0",
-                primary8: "#00c0c0",
-                primary9: "#00dfe0",
-                primary10: "#00ffff",
-                primary11: "#20ffff",
-                primary12: "#40ffff",
-            },
-        },
-        lightTheme: {
-            colors: {
-                primary: "#009485",
-                background: "#fffffe",
-                color: "black",
-                primary1: "#40ffff",
-                primary2: "#20ffff",
-                primary3: "#00ffff",
-                primary4: "#00dfe0",
-                primary5: "#00c0c0",
-                primary6: "#00a0a0",
-                primary7: "#007575",
-                primary8: "#006b6b",
-                primary9: "#006060",
-                primary10: "#005555",
-                primary11: "#004b4b",
-                primary12: "#004040",
-            },
-        },
+    let initialColorMode = localStorage.getItem("kubeseal-ui-color-mode")
+
+    if (initialColorMode === null || initialColorMode === "") {
+        initialColorMode = "dark"
+        localStorage.setItem("kubeseal-ui-color-mode", initialColorMode)
     }
 
+    const [colorMode, setColorMode] = useState(initialColorMode)
+
+    const toggleColorMode = useMemo(
+        () => ({
+            toggleColorMode: () => {
+                setColorMode((prevMode) => {
+                    const nextMode = prevMode === "light" ? "dark" : "light"
+                    localStorage.setItem("kubeseal-ui-color-mode", nextMode)
+                    return nextMode
+                })
+            },
+        }),
+        []
+    )
+
+    const theme = useMemo(
+        () =>
+            createTheme({
+                palette: {
+                    mode: colorMode,
+                    background: {
+                        ...(colorMode === "dark" && {
+                            default: "#1e1e1e",
+                        }),
+                        ...(colorMode === "light" && {
+                            default: "#fffffe",
+                        }),
+                    },
+                    primary: {
+                        main: "#009485",
+                        contrastText: "#ffffff",
+                    },
+                    neutral: {
+                        ...(colorMode === "dark" && {
+                            main: "#151617",
+                            dark: "#151617",
+                            border: "#697177",
+                            contrastText: "#ffffff",
+                        }),
+                        ...(colorMode === "light" && {
+                            main: "#eae9e8",
+                            light: "#eae9e8",
+                            border: "#697177",
+                            contrastText: "#000000",
+                        }),
+                    },
+                },
+            }),
+        [colorMode]
+    )
+
     return (
-        <HopeProvider config={config}>
-            <Application />
-        </HopeProvider>
+        <ColorModeContext.Provider value={toggleColorMode}>
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <Application />
+            </ThemeProvider>
+        </ColorModeContext.Provider>
     )
 }
 

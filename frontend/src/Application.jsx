@@ -1,11 +1,11 @@
-import { Box } from "@hope-ui/solid"
-import AppBar from "./components/AppBar"
+import { Box } from "@mui/material"
+import ApplicationBar from "./components/ApplicationBar"
 import ViewContainer from "./components/ViewContainer"
 
 function Application() {
     return (
-        <Box width="100vw" height="100vh" minWidth="1344px" overwflow-x="auto">
-            <AppBar />
+        <Box sx={{ width: "100vw", height: "100vh", minWidth: "1400px", overwflowX: "auto" }}>
+            <ApplicationBar />
             <ViewContainer />
         </Box>
     )

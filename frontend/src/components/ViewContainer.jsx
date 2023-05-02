@@ -1,24 +1,13 @@
-import { Box, Center, Flex, Spacer } from "@hope-ui/solid"
-import SealingForm from "./SealingForm"
+import { Box, Container } from "@mui/material"
+import SealingForm from "./SealingForm.jsx"
 
 function ViewContainer() {
     return (
-        <Flex>
-            <Spacer />
-            <Center>
-                <Box
-                    width="80%"
-                    minWidth="1344px"
-                    marginLeft="25px"
-                    marginRight="25px"
-                    height="calc(100vh - 60px)"
-                    paddingTop="25px"
-                    paddingBottom="25px">
-                    <SealingForm />
-                </Box>
-            </Center>
-            <Spacer />
-        </Flex>
+        <Container sx={{ minWidth: "1400px", padding: "0" }}>
+            <Box sx={{ height: "calc(100vh - 60px)", padding: "25px 0", margin: "0" }}>
+                <SealingForm />
+            </Box>
+        </Container>
     )
 }
 
