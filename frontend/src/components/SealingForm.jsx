@@ -34,7 +34,7 @@ function SealingForm() {
     const [store, setStore] = createStore({
         project: "",
         projects: [],
-        rawSecret: "",
+        sourceSecret: "",
         sealedSecret: "",
     })
 
@@ -44,7 +44,7 @@ function SealingForm() {
                 setStore({
                     project: store.project,
                     projects: response.projects,
-                    rawSecret: store.rawSecret,
+                    sourceSecret: store.sourceSecret,
                     sealedSecret: store.sealedSecret,
                 })
             })
@@ -54,11 +54,11 @@ function SealingForm() {
             })
     })
 
-    const onRawSecretEditorChange = (value) => {
+    const onSourceSecretEditorChange = (value) => {
         setStore({
             project: store.project,
             projects: store.projects,
-            rawSecret: value,
+            sourceSecret: value,
             sealedSecret: store.sealedSecret,
         })
     }
@@ -66,13 +66,13 @@ function SealingForm() {
     const onSealButtonClick = () => {
         SealingService.sealSecret({
             project: store.project,
-            rawSecret: store.rawSecret,
+            sourceSecret: store.sourceSecret,
         })
             .then((response) => {
                 setStore({
                     project: store.project,
                     projects: store.projects,
-                    rawSecret: store.rawSecret,
+                    sourceSecret: store.sourceSecret,
                     sealedSecret: response.sealedSecret,
                 })
             })
@@ -86,7 +86,7 @@ function SealingForm() {
         setStore({
             project: value,
             projects: store.projects,
-            rawSecret: store.rawSecret,
+            sourceSecret: store.sourceSecret,
             sealedSecret: store.sealedSecret,
         })
     }
@@ -126,11 +126,11 @@ function SealingForm() {
                     <GridItem w="100%" h="100%">
                         <Box class={editorBoxCSS()}>
                             <CodeEditor
-                                id="rawSecret"
-                                title="Raw Secret"
-                                content={store.rawSecret}
+                                id="sourceSecret"
+                                title="Source Secret"
+                                content={store.sourceSecret}
                                 onChange={(value) =>
-                                    onRawSecretEditorChange(value)
+                                    onSourceSecretEditorChange(value)
                                 }
                             />
                         </Box>

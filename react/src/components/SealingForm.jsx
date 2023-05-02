@@ -55,7 +55,7 @@ function SealingForm() {
                 <Grid display="container" sx={{ height: "100%" }} columns={12}>
                     <Grid item container xs={6}>
                         <EditorBox sx={{ marginRight: "10px" }}>
-                            <CodeEditor id="rawSecret" title="Source Secret" />
+                            <CodeEditor id="sourceSecret" title="Source Secret" />
                         </EditorBox>
                     </Grid>
                     <Grid item container xs={6}>

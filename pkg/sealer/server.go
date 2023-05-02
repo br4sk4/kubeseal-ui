@@ -72,7 +72,7 @@ func sealEnpointHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sealedSecret, err := Seal(cluster, controllerNamespace, controllerName, []byte(requestBody.RawSecret))
+	sealedSecret, err := Seal(cluster, controllerNamespace, controllerName, []byte(requestBody.SourceSecret))
 	if !checkError(w, err, "error while sealing secret") {
 		return
 	}
@@ -136,8 +136,8 @@ func handleError(w http.ResponseWriter, err error) {
 }
 
 type SealingRequestBody struct {
-	Project   string `json:"project"`
-	RawSecret string `json:"rawSecret"`
+	Project      string `json:"project"`
+	SourceSecret string `json:"sourceSecret"`
 }
 
 type SealingResponseBody struct {
