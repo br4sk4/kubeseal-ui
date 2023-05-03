@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sort"
 	"time"
 )
 
@@ -125,12 +126,43 @@ func reencryptEnpointHandler(w http.ResponseWriter, r *http.Request) {
 func projectsEndpointHandler(w http.ResponseWriter, r *http.Request) {
 	projects := make([]ProjectSelection, 0)
 
-	for _, project := range config.Server.Projects {
+	tmpProjects := make([]Project, 0)
+	tmpProjects = append(tmpProjects, Project{
+		ClusterName: "dev4-cg0",
+		ProjectName: "mate",
+	})
+	tmpProjects = append(tmpProjects, Project{
+		ClusterName: "dev4-cg0",
+		ProjectName: "evolution",
+	})
+	tmpProjects = append(tmpProjects, Project{
+		ClusterName: "dev3-cg0",
+		ProjectName: "mate",
+	})
+	tmpProjects = append(tmpProjects, Project{
+		ClusterName: "dev3-cg0",
+		ProjectName: "evolution",
+	})
+	tmpProjects = append(tmpProjects, Project{
+		ClusterName: "dev4-cg0",
+		ProjectName: "application",
+	})
+
+	for _, project := range tmpProjects {
 		projects = append(projects, ProjectSelection{
 			Identifier: project.Hash(),
-			Label:      project.ProjectName + " (" + project.ClusterName + ")",
+			Label:      project.ProjectName,
+			Group:      project.ClusterName,
 		})
 	}
+
+	sort.Slice(projects, func(i, j int) bool {
+		if projects[i].Group != projects[j].Group {
+			return projects[i].Group < projects[j].Group
+		}
+
+		return projects[i].Label < projects[j].Label
+	})
 
 	responseBody, err := json.Marshal(ProjectsResponseBody{Projects: projects})
 	if !checkError(w, err, "error while marshalling response body") {
@@ -189,4 +221,5 @@ type ProjectsResponseBody struct {
 type ProjectSelection struct {
 	Identifier string `json:"id"`
 	Label      string `json:"label"`
+	Group      string `json:"group"`
 }

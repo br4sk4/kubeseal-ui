@@ -1,5 +1,5 @@
-import { styled } from "@mui/material/styles"
-import { Autocomplete, TextField } from "@mui/material"
+import { darken, lighten, styled } from "@mui/material/styles"
+import { Autocomplete, Popper, TextField } from "@mui/material"
 
 const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     "& .MuiAutocomplete-inputRoot": {
@@ -21,10 +21,29 @@ const StyledAutocomplete = styled(Autocomplete)(({ theme }) => ({
     },
 }))
 
+const StyledPopper = styled(Popper)(({ theme }) => ({
+    "& ul": {
+        backgroundColor: theme.palette.neutral.main,
+    },
+}))
+
+const GroupHeader = styled("div")(({ theme }) => ({
+    padding: "4px 10px",
+    color: theme.palette.primary.main,
+    backgroundColor:
+        theme.palette.mode === "light"
+            ? lighten(theme.palette.primary.light, 0.8)
+            : darken(theme.palette.primary.main, 0.8),
+}))
+
+const GroupItems = styled("ul")({
+    padding: 0,
+})
+
 function ProjectSelection(props) {
     const changeSelection = (event, value) => {
         if (typeof props.onChange === "function") {
-            props.onChange(value.id)
+            props.onChange(value !== null ? value.id : "")
         }
     }
 
@@ -33,6 +52,7 @@ function ProjectSelection(props) {
             size="small"
             disablePortal={true}
             options={props.options}
+            groupBy={(option) => option.group}
             getOptionLabel={(option) => option.label}
             onChange={(event, value) => changeSelection(event, value)}
             renderInput={(params) => (
@@ -43,6 +63,13 @@ function ProjectSelection(props) {
                     placeholder="select a project"
                 />
             )}
+            renderGroup={(params) => (
+                <li key={params.key}>
+                    <GroupHeader>{params.group}</GroupHeader>
+                    <GroupItems>{params.children}</GroupItems>
+                </li>
+            )}
+            PopperComponent={StyledPopper}
         />
     )
 }

@@ -45,10 +45,6 @@ function SealingForm() {
             })
             .catch((error) => {
                 console.log(error)
-                setNotification({
-                    open: true,
-                    message: error,
-                })
             })
     }, [])
 
