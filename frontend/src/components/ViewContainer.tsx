@@ -1,5 +1,5 @@
 import { Box, Container } from "@mui/material"
-import SealingForm from "./SealingForm.jsx"
+import SealingForm from "./SealingForm"
 
 function ViewContainer() {
     return (

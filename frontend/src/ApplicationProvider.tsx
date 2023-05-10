@@ -1,16 +1,32 @@
 import Application from "./Application"
-import { CssBaseline } from "@mui/material"
+import { CssBaseline, PaletteMode } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { createContext, useMemo, useState } from "react"
 
 export const ColorModeContext = createContext({
-    toggleColorMode: () => {},
+    toggleColorMode: () => {
+    },
 })
 
-function ApplicationProvider() {
-    let initialColorMode = localStorage.getItem("kubeseal-ui-color-mode")
+declare module "@mui/material/styles" {
+    interface Palette {
+        neutral: Palette["primary"];
+    }
 
-    if (initialColorMode === null || initialColorMode === "") {
+    // allow configuration using `createTheme`
+    interface PaletteOptions {
+        neutral?: PaletteOptions["primary"];
+    }
+
+    interface PaletteColor {
+        border?: string
+    }
+}
+
+function ApplicationProvider() {
+    let initialColorMode: PaletteMode = localStorage.getItem("kubeseal-ui-color-mode") === "light" ? "light" : "dark"
+
+    if (initialColorMode === null) {
         initialColorMode = "dark"
         localStorage.setItem("kubeseal-ui-color-mode", initialColorMode)
     }
@@ -27,7 +43,7 @@ function ApplicationProvider() {
                 })
             },
         }),
-        []
+        [],
     )
 
     const theme = useMemo(
@@ -48,22 +64,19 @@ function ApplicationProvider() {
                         contrastText: "#ffffff",
                     },
                     neutral: {
-                        ...(colorMode === "dark" && {
+                        ...{
                             main: "#151617",
-                            dark: "#151617",
                             border: "#697177",
                             contrastText: "#ffffff",
-                        }),
+                        },
                         ...(colorMode === "light" && {
                             main: "#eae9e8",
-                            light: "#eae9e8",
-                            border: "#697177",
                             contrastText: "#000000",
                         }),
                     },
                 },
             }),
-        [colorMode]
+        [colorMode],
     )
 
     return (

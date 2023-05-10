@@ -9,7 +9,7 @@ export default defineConfig({
     },
     build: {
         outDir: "../.dist/frontend",
-        emptyOutDir: "true",
+        emptyOutDir: true,
         target: "esnext",
     },
 })

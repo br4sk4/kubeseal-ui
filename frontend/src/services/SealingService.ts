@@ -1,9 +1,9 @@
 class SealingService {
-    sealSecret(requestBody) {
+    sealSecret(requestBody: any) {
         return fetchSealedSecret("/api/seal", requestBody)
     }
 
-    reencryptSecret(requestBody) {
+    reencryptSecret(requestBody: any) {
         return fetchSealedSecret("/api/reencrypt", requestBody)
     }
 
@@ -12,7 +12,7 @@ class SealingService {
     }
 }
 
-async function fetchSealedSecret(url, requestBody) {
+async function fetchSealedSecret(url: string, requestBody: any) {
     const response = await fetch(url, {
         method: "POST",
         headers: new Headers({

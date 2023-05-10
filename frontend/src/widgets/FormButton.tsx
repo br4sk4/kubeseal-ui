@@ -15,9 +15,12 @@ const StyledButton = styled(Button)(({ theme }) => ({
         borderColor: theme.palette.primary.main,
         color: theme.palette.primary.main,
     },
+    "&:focus": {
+        outline: "0",
+    },
 }))
 
-function FormButton(props) {
+function FormButton(props: any) {
     return <StyledButton {...props} />
 }
 

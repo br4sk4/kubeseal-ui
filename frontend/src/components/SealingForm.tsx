@@ -40,19 +40,19 @@ function SealingForm() {
 
     useEffect(() => {
         SealingService.getProjects()
-            .then((response) => {
+            .then((response: any) => {
                 setProjects(response.projects)
             })
-            .catch((error) => {
+            .catch((error: any) => {
                 console.log(error)
             })
     }, [])
 
-    const onProjectSelectionChange = (value) => {
+    const onProjectSelectionChange = (value: any) => {
         setProject(value)
     }
 
-    const onSourceSecretEditorChange = (value) => {
+    const onSourceSecretEditorChange = (value: any) => {
         setSourceSecret(value)
     }
 
@@ -62,10 +62,10 @@ function SealingForm() {
             project: project,
             sourceSecret: sourceSecret,
         })
-            .then((response) => {
+            .then((response: any) => {
                 setSealedSecret(response.sealedSecret)
             })
-            .catch((error) => {
+            .catch((error: any) => {
                 console.log(error)
                 setNotification({
                     open: true,
@@ -80,10 +80,10 @@ function SealingForm() {
             project: project,
             sourceSecret: sourceSecret,
         })
-            .then((response) => {
+            .then((response: any) => {
                 setSealedSecret(response.sealedSecret)
             })
-            .catch((error) => {
+            .catch((error: any) => {
                 console.log(error)
                 setNotification({
                     open: true,
@@ -92,7 +92,7 @@ function SealingForm() {
             })
     }
 
-    const closeNotification = (event, reason) => {
+    const closeNotification = (_: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === "clickaway") {
             return
         }
@@ -111,7 +111,7 @@ function SealingForm() {
                         <Box sx={{ flexGrow: 1 }}>
                             <ProjectSelection
                                 options={projects}
-                                onChange={(value) => onProjectSelectionChange(value)}
+                                onChange={(value: any) => onProjectSelectionChange(value)}
                             />
                         </Box>
                         <Box sx={{ width: "120px" }}>
@@ -142,7 +142,7 @@ function SealingForm() {
                             <CodeEditor
                                 id="sourceSecret"
                                 title="Source Secret"
-                                onChange={(value) => onSourceSecretEditorChange(value)}
+                                onChange={(value: any) => onSourceSecretEditorChange(value)}
                             />
                         </EditorBox>
                     </Grid>

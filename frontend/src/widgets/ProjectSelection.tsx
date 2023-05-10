@@ -40,8 +40,8 @@ const GroupItems = styled("ul")({
     padding: 0,
 })
 
-function ProjectSelection(props) {
-    const changeSelection = (event, value) => {
+function ProjectSelection(props: any) {
+    const changeSelection = (_: any, value: any) => {
         if (typeof props.onChange === "function") {
             props.onChange(value !== null ? value.id : "")
         }
@@ -52,8 +52,8 @@ function ProjectSelection(props) {
             size="small"
             disablePortal={true}
             options={props.options}
-            groupBy={(option) => option.group}
-            getOptionLabel={(option) => option.label}
+            groupBy={(option: any) => option.group}
+            getOptionLabel={(option: any) => option.label}
             onChange={(event, value) => changeSelection(event, value)}
             renderInput={(params) => (
                 <TextField
