@@ -1,12 +1,8 @@
 import Application from "./Application"
-import { CssBaseline, PaletteMode } from "@mui/material"
+import { CssBaseline } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
-import { createContext, useMemo, useState } from "react"
-
-export const ColorModeContext = createContext({
-    toggleColorMode: () => {
-    },
-})
+import { useMemo } from "react"
+import { useSelector } from "react-redux"
 
 declare module "@mui/material/styles" {
     interface Palette {
@@ -24,27 +20,7 @@ declare module "@mui/material/styles" {
 }
 
 function ApplicationProvider() {
-    let initialColorMode: PaletteMode = localStorage.getItem("kubeseal-ui-color-mode") === "light" ? "light" : "dark"
-
-    if (initialColorMode === null) {
-        initialColorMode = "dark"
-        localStorage.setItem("kubeseal-ui-color-mode", initialColorMode)
-    }
-
-    const [colorMode, setColorMode] = useState(initialColorMode)
-
-    const toggleColorMode = useMemo(
-        () => ({
-            toggleColorMode: () => {
-                setColorMode((prevMode) => {
-                    const nextMode = prevMode === "light" ? "dark" : "light"
-                    localStorage.setItem("kubeseal-ui-color-mode", nextMode)
-                    return nextMode
-                })
-            },
-        }),
-        [],
-    )
+    const colorMode = useSelector((state: any) => state.theme.colorMode)
 
     const theme = useMemo(
         () =>
@@ -80,12 +56,10 @@ function ApplicationProvider() {
     )
 
     return (
-        <ColorModeContext.Provider value={toggleColorMode}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Application />
-            </ThemeProvider>
-        </ColorModeContext.Provider>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Application />
+        </ThemeProvider>
     )
 }
 

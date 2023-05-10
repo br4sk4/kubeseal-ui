@@ -3,13 +3,13 @@ import { useTheme } from "@mui/material/styles"
 import LightModeIcon from "@mui/icons-material/LightModeOutlined"
 import DarkModeIcon from "@mui/icons-material/DarkModeOutlined"
 import secretImage from "../assets/secret.png"
-import { ColorModeContext } from "../ApplicationProvider"
-import { useContext } from "react"
 import FormButton from "../widgets/FormButton"
+import { useDispatch } from "react-redux"
+import { toggleColorMode } from "../stores/features/themeSlice"
 
 function ApplicationBar() {
     const theme = useTheme()
-    const colorMode = useContext(ColorModeContext)
+    const dispatch = useDispatch()
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -37,7 +37,7 @@ function ApplicationBar() {
                             KubeSeal UI
                         </Typography>
                         <FormButton
-                            onClick={colorMode.toggleColorMode}
+                            onClick={() => dispatch(toggleColorMode())}
                             sx={{
                                 padding: "0",
                                 minWidth: "40px",
